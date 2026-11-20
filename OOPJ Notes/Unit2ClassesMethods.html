@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Unit 2 Java study guide on object-oriented programming, classes, objects, methods, constructors, and access modifiers, with interactive diagrams and runnable examples.">
+  <title>ITMBU University — Unit 2: Classes, Objects & Methods</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef3f8;
+      --text: #1f2937;
+      --muted: #64748b;
+      --primary: #0f766e;
+      --primary-2: #14b8a6;
+      --accent: #f97316;
+      --border: #dbe3ea;
+      --code: #101827;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .progress { position: fixed; top: 0; left: 0; width: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent)); z-index: 1000; }
+    header {
+      background: radial-gradient(circle at top right, rgba(20,184,166,0.35), transparent 35%), linear-gradient(135deg, #0f172a, #134e4a);
+      color: white;
+      padding: 64px 20px 58px;
+    }
+    .hero { max-width: 1180px; margin: auto; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 800; opacity: .85; }
+    h1 { font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.08; margin: 10px 0 14px; }
+    .hero p { max-width: 900px; font-size: 1.08rem; color: #dbeafe; margin: 0; }
+    .notice { max-width: 1180px; margin: 22px auto 0; padding: 18px 20px; border-radius: 14px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: #eefbf9; }
+    .pdf-action { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; color: #dbeafe; font-size: .9rem; text-align: center; }
+    .layout { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 28px; padding: 30px 20px 70px; }
+    aside {
+      position: sticky; top: 18px; align-self: start; max-height: calc(100vh - 36px); overflow: auto;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 18px;
+    }
+    aside h2 { margin: 0 0 12px; font-size: 1rem; }
+    aside a { display: block; font-size: .9rem; color: var(--text); padding: 8px 10px; border-radius: 8px; }
+    aside a:hover { background: var(--surface-2); text-decoration: none; }
+    main { min-width: 0; }
+    section.topic {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 30px; margin-bottom: 28px;
+    }
+    .topic-head { margin-bottom: 18px; }
+    .topic-number { color: var(--accent); font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.2; margin: 4px 0 8px; }
+    h3 { margin-top: 26px; line-height: 1.3; }
+    p { margin: 10px 0 14px; }
+    ul { padding-left: 22px; }
+    li { margin: 7px 0; }
+    .definition, .tip, .abstain {
+      border-radius: 10px; padding: 15px 18px; margin: 18px 0;
+    }
+    .definition { border-left: 4px solid var(--primary); background: #f0fdfa; }
+    .abstain { border-left: 4px solid var(--accent); background: #fff7ed; color: #7c2d12; }
+    .tip { background: #f8fafc; border: 1px solid var(--border); }
+    .visual {
+      margin: 22px 0; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-2);
+      padding: 20px; overflow: hidden;
+    }
+    .visual-title { font-weight: 800; margin-bottom: 14px; text-align: center; }
+    .principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .principle {
+      min-height: 110px; display: flex; align-items: center; justify-content: center;
+      text-align: center; border: 1px solid var(--border); border-radius: 12px; background: white;
+      font-weight: 800; transition: .35s ease;
+    }
+    .principle.active { transform: translateY(-7px) scale(1.02); border-color: var(--primary-2); box-shadow: 0 12px 20px rgba(20,184,166,.18); }
+    .encapsulation-box, .reference-stage, .constructor-track { display: flex; align-items: center; justify-content: center; gap: 25px; }
+    .encapsulation-box { margin-top: 18px; }
+    .class-shell {
+      padding: 20px; border: 3px solid var(--primary); border-radius: 16px; background: #ecfeff; min-width: 220px;
+    }
+    .public-layer, .private-layer {
+      padding: 14px; border-radius: 10px; margin-bottom: 12px; font-weight: 700;
+    }
+    .public-layer { background: #dcfce7; }
+    .private-layer { background: #fee2e2; color: #7f1d1d; }
+    .reference-stage { min-height: 190px; }
+    .reference, .object {
+      min-width: 170px; padding: 22px 25px; text-align: center; border-radius: 12px; transition: .4s ease;
+    }
+    .reference { border: 2px dashed #64748b; background: white; }
+    .object { border: 2px solid var(--primary); background: #f0fdfa; }
+    .reference.linked { border-color: var(--primary); transform: translateX(10px); }
+    .object.pulse { animation: pulseObject .9s ease; }
+    @keyframes pulseObject { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    .inheritance-tree { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .node { min-width: 130px; padding: 12px 20px; text-align: center; border: 2px solid var(--primary); border-radius: 999px; background: white; font-weight: 800; }
+    .children {
+      width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; position: relative;
+    }
+    .children::before { content: ""; position: absolute; left: 16.5%; right: 16.5%; top: -8px; border-top: 2px solid var(--primary-2); }
+    .children .node { opacity: .75; }
+    .children .node.highlight { opacity: 1; transform: translateY(4px); box-shadow: 0 10px 18px rgba(20,184,166,.2); }
+    .method-flow { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-items: center; }
+    .method-box, .parameter-box, .return-box { padding: 13px 17px; border-radius: 10px; border: 1px solid var(--border); background: white; font-weight: 700; }
+    .arrow { color: var(--primary); font-size: 1.5rem; font-weight: 900; }
+    table { width: 100%; border-collapse: collapse; margin: 18px 0; }
+    th, td {
+      border: 1px solid var(--border); padding: 12px; text-align: left; vertical-align: top;
+    }
+    th { background: #f1f5f9; }
+    .overload-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .signature {
+      padding: 14px; border: 1px solid var(--border); border-radius: 10px; background: white;
+      font-family: "SFMono-Regular", Consolas, monospace; transition: .3s ease;
+    }
+    .signature.highlight { transform: scale(1.02); border-color: var(--accent); box-shadow: 0 10px 16px rgba(249,115,22,.15); }
+    .code-wrap { margin-top: 22px; }
+    .code-title { font-weight: 800; margin-bottom: 8px; }
+    .runner-panel {
+      margin: 18px 0 24px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; padding: 14px;
+    }
+    .runner-title { margin-bottom: 8px; font-weight: 800; }
+    .code-editor {
+      display: block; width: 100%; min-height: 230px; resize: vertical; padding: 14px;
+      border: 1px solid var(--border); border-radius: 10px; color: var(--code); background: #fff;
+      font: .86rem/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace; tab-size: 4;
+    }
+    .print-code { display: none; }
+    .runner-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .execution-output {
+      min-height: 58px; max-height: 220px; overflow: auto; margin-top: 10px; padding: 12px;
+      border: 1px solid var(--border); border-radius: 10px; color: #e2e8f0; background: #0f172a;
+      font: .82rem/1.5 "SFMono-Regular", Consolas, "Liberation Mono", monospace; white-space: pre-wrap;
+    }
+    .runner-note { color: var(--muted); font-size: .88rem; }
+    pre {
+      margin: 16px 0; padding: 18px; overflow: auto; border-radius: 12px;
+      color: #e5edf7; background: var(--code); font-size: .86rem; line-height: 1.6; tab-size: 4;
+    }
+    code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    button {
+      border: 0; border-radius: 9px; padding: 9px 13px; background: var(--primary); color: white; font-weight: 700;
+      cursor: pointer; margin: 4px;
+    }
+    button.secondary { background: #475569; }
+    button:hover { filter: brightness(1.08); }
+    .stack { display: flex; flex-direction: column-reverse; gap: 8px; align-items: center; min-height: 180px; }
+    .frame {
+      width: 230px; padding: 11px; border-radius: 9px; background: white; border: 2px solid var(--primary);
+      animation: stackIn .35s ease; text-align: center; font-weight: 700;
+    }
+    @keyframes stackIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .top {
+      position: fixed; right: 20px; bottom: 20px; width: 42px; height: 42px; border-radius: 50%;
+      background: #0f172a; padding: 0; z-index: 999;
+    }
+    footer { text-align: center; color: var(--muted); padding: 30px 20px 50px; font-size: .9rem; }
+    @media (max-width: 1000px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: relative; top: auto; max-height: none; }
+      .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .encapsulation-box { flex-direction: column; }
+    }
+    @media (max-width: 650px) {
+      section.topic { padding: 21px; }
+      .principles, .overload-grid, .children { grid-template-columns: 1fr; }
+      .reference-stage, .encapsulation-box { flex-direction: column; }
+      table { font-size: .88rem; }
+      th, td { padding: 8px; }
+    }
+    @page { size: A4; margin: 16mm 15mm 18mm; }
+    @media print {
+      html { scroll-behavior: auto; }
+      body {
+        background: #fff; color: #111827; font-size: 10pt; line-height: 1.5;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+      .progress, aside, .pdf-action, button, .top, .runner-actions, .execution-output { display: none !important; }
+      header { padding: 0 0 14pt; color: #111827; background: #fff !important; border-bottom: 2px solid #0f766e; }
+      .hero { max-width: none; }
+      .eyebrow { color: #0f766e; opacity: 1; }
+      h1 { color: #111827; font-size: 26pt; }
+      .hero p { color: #374151; font-size: 11pt; }
+      .notice { margin: 12pt 0 0; padding: 10pt; color: #1f2937; background: #f3f4f6; border: 1px solid #d1d5db; }
+      .layout { display: block; max-width: none; margin: 0; padding: 12pt 0 0; }
+      section.topic { margin: 0; padding: 14pt 0; border: 0; border-bottom: 1px solid #9ca3af; border-radius: 0; box-shadow: none; break-inside: auto; }
+      .topic-head, h2, h3 { break-after: avoid-page; }
+      h2 { font-size: 17pt; }
+      h3 { font-size: 12pt; }
+      p, ul, ol { orphans: 3; widows: 3; }
+      li, tr, .definition, .tip, .visual { break-inside: avoid-page; }
+      .visual, .definition, .tip { overflow: visible; box-shadow: none; }
+      .runner-panel { padding: 0; border: 0; background: #fff; }
+      .code-editor { display: none !important; }
+      .print-code {
+        display: block; margin: 8pt 0; padding: 9pt; overflow: visible;
+        border: 1px solid #cbd5e1; border-radius: 4px; color: #111827; background: #f3f4f6;
+        font: 8pt/1.35 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 4;
+        break-inside: auto; page-break-inside: auto; print-color-adjust: exact;
+      }
+      pre { overflow: visible; padding: 9pt; color: #111827; background: #f3f4f6; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 8pt; line-height: 1.35; white-space: pre-wrap; overflow-wrap: anywhere; break-inside: auto; }
+      a { color: #111827; text-decoration: none; }
+      footer { padding: 14pt 0 0; color: #4b5563; border-top: 1px solid #9ca3af; }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" style="position:fixed;top:14px;left:14px;z-index:1100;padding:8px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;color:#fff;background:rgba(15,23,42,.72);font-size:.82rem;font-weight:700;text-decoration:none;backdrop-filter:blur(8px)">Dashboard</a>
+
+  <div class="progress" id="progress"></div>
+
+  <header>
+    <div class="hero">
+      <div class="eyebrow">ITMBU University • Computer Science &amp; Engineering</div>
+      <h1>Unit 2: Classes, Objects &amp; Methods</h1>
+      <p>This unit explains how Java organizes behaviour through classes, objects, methods, constructors, and access controls while keeping code reusable and structured.</p>
+    </div>
+    <div class="notice"><strong>Unit overview:</strong> Each concept is explained in plain language and supported by code examples and interactive visualizations.</div>
+    <div class="pdf-action">
+      <button type="button" onclick="window.print()">Download as PDF</button>
+      <span>In the print dialog, choose <strong>Save as PDF</strong> as the destination.</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h2>Unit Navigation</h2>
+      <a href="#oop">1. OOP</a>
+      <a href="#principles">2. OOP Principles</a>
+      <a href="#encapsulation">3. Encapsulation</a>
+      <a href="#inheritance">4. Inheritance</a>
+      <a href="#abstraction">5. Abstraction</a>
+      <a href="#polymorphism">6. Polymorphism</a>
+      <a href="#classes">7. Classes</a>
+      <a href="#objects">8. Objects</a>
+      <a href="#new-operator">9. new Operator</a>
+      <a href="#access">10. Access Modifiers</a>
+      <a href="#methods">11. Methods</a>
+      <a href="#method-overloading">12. Method Overloading</a>
+      <a href="#recursion">13. Recursion</a>
+      <a href="#constructors">14. Constructors</a>
+    </aside>
+
+    <main>
+      <section class="topic" id="oop">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 1</div>
+            <h2>Object-Oriented Programming</h2>
+          </div>
+        </div>
+        <div class="definition">Object-oriented programming is a programming style where the real world is modelled as objects that hold data and behaviour. Java is built around this model, which helps produce cleaner, reusable, and better-organized software.</div>
+        <p>Instead of writing one long list of instructions, programmers define classes that describe a concept, then create objects from those classes. This makes it easy to reuse code and manage complexity in larger programs.</p>
+      </section>
+
+      <section class="topic" id="principles">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 2</div>
+            <h2>Four OOP Principles</h2>
+          </div>
+        </div>
+        <div id="oopPrinciples" class="principles">
+          <div class="principle active">Encapsulation</div>
+          <div class="principle">Inheritance</div>
+          <div class="principle">Abstraction</div>
+          <div class="principle">Polymorphism</div>
+        </div>
+        <div style="margin-top: 15px; text-align: center;">
+          <button onclick="cyclePrinciples()">Animate Principles</button>
+        </div>
+        <ul>
+          <li><strong>Encapsulation:</strong> hiding internal details and exposing only what is needed.</li>
+          <li><strong>Inheritance:</strong> building a new class from an existing class to reuse and extend functionality.</li>
+          <li><strong>Abstraction:</strong> showing only relevant details and hiding unnecessary implementation.</li>
+          <li><strong>Polymorphism:</strong> allowing one interface or method to work with different object types.</li>
+        </ul>
+      </section>
+
+      <section class="topic" id="encapsulation">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 3</div>
+            <h2>Encapsulation</h2>
+          </div>
+        </div>
+        <div class="definition">Encapsulation keeps the internal data of an object protected and controlled. It allows other parts of the program to interact with the object through a defined interface instead of directly changing its internal state.</div>
+        <p>In Java, private fields are commonly used inside a class so that data cannot be modified accidentally from outside. Methods are then used to read or update that data safely.</p>
+        <div class="visual">
+          <div class="visual-title">Protected data inside a class boundary</div>
+          <div class="encapsulation-box">
+            <div class="class-shell">
+              <div class="public-layer">public setAge()</div>
+              <div class="public-layer">public getAge()</div>
+              <div class="private-layer">private int age;</div>
+            </div>
+            <div class="access-arrow">→</div>
+            <div class="class-shell">
+              <div class="public-layer">Safe control</div>
+              <div class="private-layer">Hidden data</div>
+            </div>
+          </div>
+        </div>
+        <div class="code-wrap">
+          <div class="code-title">Example</div>
+          <pre><code>class Person {
+    private int age;
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Person {
+        private int age;
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public int getAge() {
+            return age;
+        }
+    }
+
+    public static void main(String[] args) {
+        Person person = new Person();
+        person.setAge(21);
+        System.out.println("Age: " + person.getAge());
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="inheritance">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 4</div>
+            <h2>Inheritance</h2>
+          </div>
+        </div>
+        <div class="definition">Inheritance lets one class inherit properties and methods from another class. This helps reuse common logic and create a hierarchy where specialized classes extend general ones.</div>
+        <p>When a child class extends a parent class, it automatically gains the parent’s fields and methods, while also adding its own unique behaviour.</p>
+        <div class="visual">
+          <div class="visual-title">Class hierarchy</div>
+          <div class="inheritance-tree">
+            <div class="node" id="parentNode">Animal</div>
+            <div class="children">
+              <div class="node child-node">Dog</div>
+              <div class="node child-node">Cat</div>
+              <div class="node child-node">Bird</div>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 15px;">
+            <button onclick="highlightInheritance()">Highlight Children</button>
+          </div>
+        </div>
+        <div class="code-wrap">
+          <div class="code-title">Example</div>
+          <pre><code>class Animal {
+    void eat() {
+        System.out.println("Animal is eating");
+    }
+}
+
+class Dog extends Animal {
+    void bark() {
+        System.out.println("Dog is barking");
+    }
+}</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Animal {
+        void eat() {
+            System.out.println("Animal is eating");
+        }
+    }
+
+    static class Dog extends Animal {
+        void bark() {
+            System.out.println("Dog is barking");
+        }
+    }
+
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.eat();
+        dog.bark();
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="abstraction">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 5</div>
+            <h2>Abstraction</h2>
+          </div>
+        </div>
+        <div class="definition">Abstraction focuses on what an object does instead of how it does it. It hides implementation details and exposes only the essential features that users need.</div>
+        <p>This keeps code simpler and safer because callers do not need to know internal logic. Abstract classes and interfaces are common ways to apply abstraction in Java.</p>
+        <div class="code-wrap">
+          <div class="code-title">Abstract concept</div>
+          <pre><code>abstract class Shape {
+    abstract void draw();
+}</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    abstract static class Shape {
+        abstract void draw();
+    }
+
+    static class Circle extends Shape {
+        @Override
+        void draw() {
+            System.out.println("Drawing a circle");
+        }
+    }
+
+    public static void main(String[] args) {
+        Shape shape = new Circle();
+        shape.draw();
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="polymorphism">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 6</div>
+            <h2>Polymorphism</h2>
+          </div>
+        </div>
+        <div class="definition">Polymorphism means one object can take many forms. In Java, the same method or reference may behave differently depending on the actual object instance being used.</div>
+        <p>A parent type reference can point to a child object, and the method call resolves according to the actual object at runtime. This allows flexibility and extensibility in programs.</p>
+        <div class="visual">
+          <div class="visual-title">Reference and object relationship</div>
+          <div class="reference-stage">
+            <div class="reference" id="polyReference">Shape reference</div>
+            <div style="font-size: 2rem;">→</div>
+            <div class="object" id="polyObject">Circle object</div>
+          </div>
+          <div style="text-align: center;">
+            <button onclick="animatePolymorphism()">Animate Reference</button>
+          </div>
+        </div>
+        <div class="code-wrap">
+          <div class="code-title">Example</div>
+          <pre><code>class Shape { void draw() { System.out.println("Drawing shape"); } }
+class Circle extends Shape { void draw() { System.out.println("Drawing circle"); } }
+
+Shape s = new Circle();
+s.draw();</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Shape {
+        void draw() {
+            System.out.println("Drawing shape");
+        }
+    }
+
+    static class Circle extends Shape {
+        @Override
+        void draw() {
+            System.out.println("Drawing circle");
+        }
+    }
+
+    public static void main(String[] args) {
+        Shape shape = new Circle();
+        shape.draw();
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="classes">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 7</div>
+            <h2>Classes</h2>
+          </div>
+        </div>
+        <div class="definition">A class is a blueprint or template that defines the fields and methods of a type. It describes what an object knows and what it can do.</div>
+        <p>A class usually represents a real-world entity such as a person, a vehicle, a bank account, or a product. It defines the structure and the behaviour shared by all objects of that class.</p>
+        <div class="code-wrap">
+          <div class="code-title">Class declaration</div>
+          <pre><code>class Dog {
+    String breed;
+    int age;
+
+    void bark() {
+        System.out.println("Woof");
+    }
+}</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Dog {
+        String breed;
+        int age;
+
+        void bark() {
+            System.out.println("Woof");
+        }
+    }
+
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.breed = "Labrador";
+        dog.age = 3;
+        dog.bark();
+        System.out.println(dog.breed + ", age " + dog.age);
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="objects">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 8</div>
+            <h2>Objects</h2>
+          </div>
+        </div>
+        <div class="definition">An object is an instance of a class. It stores actual values in the class fields and can perform actions by calling methods on that instance.</div>
+        <p>Objects are the runtime entities created from class definitions. Each object can have different field values even if they belong to the same class.</p>
+        <div class="visual">
+          <div class="visual-title">Dog objects with different state</div>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+            <div class="object">Object 1<br />Bruno</div>
+            <div class="object">Object 2<br />Max</div>
+            <div class="object">Object 3<br />Luna</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="new-operator">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 9</div>
+            <h2>new Operator</h2>
+          </div>
+        </div>
+        <div class="definition">The new operator creates an object in memory and returns a reference to it. Without new, the class exists only as a template, not as a usable runtime object.</div>
+        <p>When you write <code>new Box()</code>, Java allocates the required memory and calls the constructor as part of object initialization.</p>
+        <div class="visual">
+          <div class="visual-title">Memory allocation</div>
+          <div class="reference-stage">
+            <div class="reference" id="boxReference">Box mybox</div>
+            <div style="font-size: 2rem;">→</div>
+            <div class="object" id="boxObject">Actual object</div>
+          </div>
+          <div style="text-align: center;">
+            <button onclick="allocateBox()">Allocate Object</button>
+          </div>
+        </div>
+        <div class="code-wrap">
+          <div class="code-title">Example</div>
+          <pre><code>Box myBox = new Box();</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Box {
+        double width = 2;
+        double height = 3;
+        double depth = 4;
+    }
+
+    public static void main(String[] args) {
+        Box myBox = new Box();
+        double volume = myBox.width * myBox.height * myBox.depth;
+        System.out.println("Box volume: " + volume);
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="access">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 10</div>
+            <h2>Access Modifiers</h2>
+          </div>
+        </div>
+        <div class="definition">Access modifiers control the visibility of class members. They define where fields and methods can be accessed and help protect the internal state of objects.</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Modifier</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody id="accessTableBody"></tbody>
+        </table>
+      </section>
+
+      <section class="topic" id="methods">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 11</div>
+            <h2>Methods</h2>
+          </div>
+        </div>
+        <div class="definition">A method is a reusable block of code that performs a specific task. Methods make programs modular, easier to read, and easier to maintain.</div>
+        <p>Methods usually take inputs, process them, and optionally return a value. This structure allows code to be organized into small, focused pieces.</p>
+        <div class="visual">
+          <div class="visual-title">Method structure</div>
+          <div class="method-flow">
+            <div class="method-box">methodName</div>
+            <div class="parameter-box">(parameters)</div>
+            <div class="arrow">→</div>
+            <div class="return-box">return value</div>
+          </div>
+        </div>
+        <div class="code-wrap">
+          <div class="code-title">Example</div>
+          <pre><code>class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Calculator {
+        int add(int a, int b) {
+            return a + b;
+        }
+    }
+
+    public static void main(String[] args) {
+        Calculator calculator = new Calculator();
+        System.out.println("2 + 3 = " + calculator.add(2, 3));
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="method-overloading">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 12</div>
+            <h2>Method Overloading</h2>
+          </div>
+        </div>
+        <div class="definition">Method overloading allows multiple methods in the same class to share the same name but use different parameter lists. Java chooses the correct version based on the arguments passed.</div>
+        <p>This is useful when related operations need the same conceptual name but different inputs. For example, an add method might accept two integers, two doubles, or one integer and one float.</p>
+        <div class="visual">
+          <div class="visual-title">Different method signatures</div>
+          <div class="overload-grid" id="overloadGrid">
+            <div class="signature">int add(int a, int b)</div>
+            <div class="signature">float add(int a, float b)</div>
+            <div class="signature">void add(float a)</div>
+            <div class="signature">int add(int a)</div>
+          </div>
+          <div style="text-align: center; margin-top: 15px;">
+            <button onclick="animateOverloading()">Show Selection</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="recursion">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 13</div>
+            <h2>Recursion</h2>
+          </div>
+        </div>
+        <div class="definition">Recursion is a technique where a method calls itself until it reaches a stopping condition. The method solves a smaller version of the same problem each time.</div>
+        <p>Recursion is helpful for tasks such as factorial, Fibonacci, tree traversal, and divide-and-conquer algorithms. The base case is essential to prevent infinite recursion.</p>
+        <div class="visual">
+          <div class="visual-title">Recursive call stack</div>
+          <div id="stackVisual" class="stack"></div>
+          <div style="text-align: center; margin-top: 12px;">
+            <button onclick="runRecursionAnimation()">Push Recursive Calls</button>
+            <button class="secondary" onclick="clearStack()">Clear</button>
+          </div>
+        </div>
+        <div class="code-wrap">
+          <div class="code-title">Example</div>
+          <pre><code>class Factorial {
+    static int factorial(int n) {
+        if (n == 1) return 1;
+        return n * factorial(n - 1);
+    }
+}</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static int factorial(int n) {
+        if (n <= 1) return 1;
+        return n * factorial(n - 1);
+    }
+
+    public static void main(String[] args) {
+        int number = 5;
+        System.out.println(number + "! = " + factorial(number));
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic" id="constructors">
+        <div class="topic-head">
+          <div>
+            <div class="topic-number">Topic 14</div>
+            <h2>Constructors</h2>
+          </div>
+        </div>
+        <div class="definition">A constructor is a special method used to initialize an object when it is created. It has the same name as the class and is called automatically when new is used.</div>
+        <p>If no constructor is written, Java provides a default constructor. A class can also define multiple constructors with different parameter lists, which is called constructor overloading.</p>
+        <div class="visual">
+          <div class="visual-title">Constructor flow</div>
+          <div class="constructor-track">
+            <div class="construction-step active" id="step1">1. Memory allocated</div>
+            <div class="construction-step" id="step2">2. Constructor called</div>
+            <div class="construction-step" id="step3">3. Object ready</div>
+          </div>
+          <div style="text-align: center; margin-top: 15px;">
+            <button onclick="runConstructorAnimation()">Run Constructor Flow</button>
+          </div>
+        </div>
+        <div class="visual">
+          <div class="visual-title">Constructor overloading</div>
+          <div class="overload-grid" id="constructorGrid">
+            <div class="signature">Box()</div>
+            <div class="signature">Box(double w, double h, double d)</div>
+          </div>
+          <div style="text-align: center; margin-top: 15px;">
+            <button onclick="animateConstructorOverloading()">Compare Constructors</button>
+          </div>
+        </div>
+        <div class="code-wrap">
+          <div class="code-title">Example</div>
+          <pre><code>class Box {
+    double width, height, depth;
+
+    Box() {
+        width = 10; height = 10; depth = 10;
+    }
+
+    Box(double w, double h, double d) {
+        width = w; height = h; depth = d;
+    }
+}</code></pre>
+          <div class="runner-panel">
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Box {
+        double width, height, depth;
+
+        Box() {
+            width = 10;
+            height = 10;
+            depth = 10;
+        }
+
+        Box(double width, double height, double depth) {
+            this.width = width;
+            this.height = height;
+            this.depth = depth;
+        }
+
+        double volume() {
+            return width * height * depth;
+        }
+    }
+
+    public static void main(String[] args) {
+        Box defaultBox = new Box();
+        Box customBox = new Box(2, 3, 4);
+        System.out.println("Default box volume: " + defaultBox.volume());
+        System.out.println("Custom box volume: " + customBox.volume());
+    }
+}</textarea>
+            <div class="runner-actions">
+              <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>ITMBU University • Computer Science & Engineering • Unit 2 Study Guide</footer>
+  <button class="top" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" title="Back to top" aria-label="Back to top">↑</button>
+
+  <script>
+    function updateProgress() {
+      const scrollTop = document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      document.getElementById('progress').style.width = progress + '%';
+    }
+
+    window.addEventListener('scroll', updateProgress);
+
+    let principleIndex = 0;
+    function cyclePrinciples() {
+      const items = document.querySelectorAll('#oopPrinciples .principle');
+      items.forEach(item => item.classList.remove('active'));
+      if (!items.length) return;
+      items[principleIndex].classList.add('active');
+      principleIndex = (principleIndex + 1) % items.length;
+    }
+
+    function highlightInheritance() {
+      const children = document.querySelectorAll('.child-node');
+      children.forEach((child, index) => {
+        setTimeout(() => {
+          child.classList.add('highlight');
+          setTimeout(() => child.classList.remove('highlight'), 750);
+        }, index * 250);
+      });
+    }
+
+    function animatePolymorphism() {
+      const reference = document.getElementById('polyReference');
+      const object = document.getElementById('polyObject');
+      reference.classList.add('linked');
+      object.classList.add('pulse');
+      setTimeout(() => {
+        reference.classList.remove('linked');
+        object.classList.remove('pulse');
+      }, 1000);
+    }
+
+    function allocateBox() {
+      const reference = document.getElementById('boxReference');
+      const object = document.getElementById('boxObject');
+      reference.innerHTML = 'Box mybox<br /><strong>reference</strong>';
+      reference.classList.add('linked');
+      object.classList.add('pulse');
+      setTimeout(() => {
+        reference.classList.remove('linked');
+        object.classList.remove('pulse');
+      }, 1000);
+    }
+
+    const accessDescriptions = {
+      public: 'public: members can be accessed from anywhere in the program.',
+      private: 'private: members can only be accessed within the same class.',
+      protected: 'protected: members are accessible within the same class, subclasses, and same-package classes.',
+      default: 'default: members are accessible only within the same package.'
+    };
+
+    function renderAccessTable() {
+      const tbody = document.getElementById('accessTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = Object.entries(accessDescriptions).map(([key, value]) => `
+        <tr>
+          <td><code>${key}</code></td>
+          <td>${value}</td>
+        </tr>
+      `).join('');
+    }
+
+    function animateOverloading() {
+      const signatures = document.querySelectorAll('#overloadGrid .signature');
+      signatures.forEach((signature, index) => {
+        setTimeout(() => {
+          signature.classList.add('highlight');
+          setTimeout(() => signature.classList.remove('highlight'), 500);
+        }, index * 250);
+      });
+    }
+
+    function runRecursionAnimation() {
+      const stack = document.getElementById('stackVisual');
+      if (!stack) return;
+      stack.innerHTML = '';
+      for (let i = 5; i >= 1; i--) {
+        setTimeout(() => {
+          const frame = document.createElement('div');
+          frame.className = 'frame';
+          frame.textContent = 'factorial(' + i + ')';
+          stack.appendChild(frame);
+        }, (5 - i) * 250);
+      }
+    }
+
+    function clearStack() {
+      const stack = document.getElementById('stackVisual');
+      if (stack) stack.innerHTML = '';
+    }
+
+    function runConstructorAnimation() {
+      const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+      steps.forEach(step => step.classList.remove('active'));
+      steps.forEach((step, index) => {
+        setTimeout(() => step.classList.add('active'), index * 500);
+      });
+    }
+
+    function animateConstructorOverloading() {
+      const items = document.querySelectorAll('#constructorGrid .signature');
+      items.forEach((item, index) => {
+        setTimeout(() => {
+          item.classList.add('highlight');
+          setTimeout(() => item.classList.remove('highlight'), 700);
+        }, index * 450);
+      });
+    }
+
+    function prepareCodeForPrint() {
+      document.querySelectorAll('.print-code').forEach(block => block.remove());
+      document.querySelectorAll('.runner-panel .code-editor').forEach(editor => {
+        const printBlock = document.createElement('div');
+        printBlock.className = 'print-code';
+        printBlock.textContent = editor.value;
+        editor.insertAdjacentElement('afterend', printBlock);
+      });
+    }
+
+    function clearPrintedCode() {
+      document.querySelectorAll('.print-code').forEach(block => block.remove());
+    }
+
+    window.addEventListener('beforeprint', prepareCodeForPrint);
+    window.addEventListener('afterprint', clearPrintedCode);
+
+    async function runJavaCode(panel) {
+      const editor = panel && panel.querySelector('.code-editor');
+      const output = panel && panel.querySelector('.execution-output');
+      const button = panel && panel.querySelector('button');
+      if (!editor || !output) return;
+      if (!editor.value.trim()) {
+        output.textContent = 'Enter a Java program before running it.';
+        return;
+      }
+      if (window.location.protocol === 'file:') {
+        output.textContent = 'Open this page from http://127.0.0.1:8000/Unit2ClassesMethods.html and start run_java_server.py.';
+        return;
+      }
+
+      if (button) button.disabled = true;
+      output.textContent = 'Compiling and running Java...';
+      try {
+        const response = await fetch('/api/execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: editor.value })
+        });
+        let result;
+        try {
+          result = await response.json();
+        } catch {
+          throw new Error(`The runner returned an invalid response (HTTP ${response.status}).`);
+        }
+        if (!response.ok) {
+          output.textContent = result.error || `Java runner returned HTTP ${response.status}.`;
+        } else if (typeof result.output === 'string') {
+          output.textContent = result.output || (result.success ? 'Program finished with no output.' : 'Java program failed.');
+        } else {
+          output.textContent = result.error || 'The Java runner returned an unexpected response.';
+        }
+      } catch (error) {
+        output.textContent = `Could not reach the local Java runner: ${error.message}`;
+      } finally {
+        if (button) button.disabled = false;
+      }
+    }
+
+    renderAccessTable();
+    updateProgress();
+    cyclePrinciples();
+    setInterval(cyclePrinciples, 1800);
+  </script>
+</body>
+</html>

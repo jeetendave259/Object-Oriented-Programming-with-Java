@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITMBU University — Unit 5: Class Modeling</title>
+    <style>
+      :root{
+        --bg:#f5f7fb;--surface:#fff;--surface-2:#eef3f8;--text:#1f2937;
+        --muted:#64748b;--primary:#0f766e;--primary-2:#14b8a6;
+        --accent:#f97316;--border:#dbe3ea;--code:#101827;
+        --shadow:0 10px 30px rgba(15,23,42,.08);--radius:16px;
+      }
+      *{box-sizing:border-box}
+      html{scroll-behavior:smooth}
+      body{
+        margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        background:var(--bg);color:var(--text);line-height:1.7;
+      }
+      a{color:var(--primary);text-decoration:none}
+      a:hover{text-decoration:underline}
+      .progress{
+        position:fixed;top:0;left:0;height:4px;width:0;z-index:1000;
+        background:linear-gradient(90deg,var(--primary),var(--accent));
+      }
+      header{
+        color:white;
+        background:radial-gradient(circle at top right,rgba(20,184,166,.35),transparent 35%),linear-gradient(135deg,#0f172a,#134e4a);
+        padding:64px 20px 58px;
+      }
+      .hero{max-width:1180px;margin:auto}
+      .eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+      h1{font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;margin:10px 0 14px}
+      .hero p{max-width:860px;font-size:1.08rem;color:#dbeafe;margin:0}
+      .notice{
+        max-width:1180px;margin:24px auto 0;padding:18px 20px;
+        border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);
+        border-radius:14px;color:#eefbf9;font-size:.94rem;
+      }
+      .pdf-action{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px;color:#dbeafe;font-size:.9rem}
+      .layout{
+        max-width:1280px;margin:0 auto;display:grid;
+        grid-template-columns:270px minmax(0,1fr);gap:28px;padding:30px 20px 70px;
+      }
+      aside{
+        position:sticky;top:18px;height:max-content;padding:18px;
+        background:var(--surface);border:1px solid var(--border);
+        border-radius:var(--radius);box-shadow:var(--shadow);
+      }
+      aside h2{font-size:1rem;margin:0 0 12px}
+      aside a{display:block;padding:8px 10px;border-radius:8px;color:var(--text);font-size:.9rem}
+      aside a:hover{background:var(--surface-2);text-decoration:none}
+      main{min-width:0}
+      section.topic{
+        padding:30px;margin-bottom:28px;background:var(--surface);
+        border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);
+      }
+      .topic-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}
+      .topic-number{color:var(--accent);font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+      h2{font-size:clamp(1.6rem,3vw,2.2rem);line-height:1.2;margin:4px 0 8px}
+      h3{margin-top:26px;line-height:1.3}
+      p{margin:10px 0 14px}
+      ul,ol{padding-left:22px}
+      li{margin:7px 0}
+      .citation{
+        display:inline-block;padding:2px 8px;border:1px solid #bbf7d0;
+        border-radius:999px;background:#ecfdf5;color:#065f46;font-size:.78rem;
+        font-weight:700;margin-left:5px;white-space:nowrap;
+      }
+      .concept-card,.definition{
+        border-left:4px solid var(--primary);background:#f0fdfa;
+        padding:15px 18px;border-radius:10px;margin:18px 0;
+      }
+      .abstention-rule{
+        border:0;border-left:4px solid var(--accent);border-radius:10px;
+        background:#fff7ed;color:#7c2d12;padding:14px 18px;margin:16px 0;font-weight:400;
+      }
+      .tip{background:#f8fafc;border:1px solid var(--border);padding:15px 18px;border-radius:10px;margin:18px 0}
+      table{width:100%;border-collapse:collapse;margin:18px 0}
+      th,td{border:1px solid var(--border);padding:12px;text-align:left;vertical-align:top}
+      th{background:#f1f5f9;color:var(--text)}
+      .uml-visualizer{
+        display:flex;justify-content:space-around;align-items:flex-start;gap:14px;
+        padding:20px;background:var(--surface-2);border:1px solid var(--border);
+        border-radius:14px;margin:24px 0;overflow-x:auto;
+      }
+      .uml-class{
+        flex:0 0 220px;border:2px solid var(--primary);border-radius:10px;
+        background:#fff;box-shadow:var(--shadow);
+      }
+      .uml-header{padding:10px;background:var(--primary);color:white;text-align:center;font-weight:800}
+      .uml-body{padding:12px;border-bottom:1px solid var(--border);min-height:58px}
+      .uml-methods{padding:12px;min-height:58px}
+      .uml-relation{display:flex;align-items:center;justify-content:center;flex:1;min-width:110px;padding-top:50px}
+      .line{height:2px;width:100%;min-width:90px;position:relative;background:var(--primary)}
+      .multiplicity-start,.multiplicity-end{position:absolute;top:-22px;color:var(--accent);font-weight:800;white-space:nowrap}
+      .multiplicity-start{left:0}.multiplicity-end{right:0}
+      pre{
+        margin:18px 0;padding:20px;overflow:auto;border-radius:12px;
+        background:var(--code);color:#e5edf7;font-size:.88rem;line-height:1.65;tab-size:4;
+      }
+      code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+      iframe{width:100%;height:500px;border:1px solid var(--border);border-radius:8px;margin-top:12px;background:white}
+      button{
+        margin:4px;padding:9px 13px;border:0;border-radius:9px;
+        color:white;background:var(--primary);font-weight:700;cursor:pointer;
+      }
+      button:hover{filter:brightness(1.08)}
+      .top{position:fixed;right:20px;bottom:20px;width:42px;height:42px;padding:0;border-radius:50%;background:#0f172a;z-index:999}
+      footer{text-align:center;color:var(--muted);padding:30px 20px 50px;font-size:.9rem}
+      .print-only{display:none}
+      @media(max-width:1000px){.layout{grid-template-columns:1fr}aside{position:relative;top:auto}}
+      @media(max-width:650px){
+        section.topic{padding:21px}
+        .uml-visualizer{align-items:center}
+        .uml-class{flex-basis:180px}
+        .uml-relation{min-width:80px}
+        table{font-size:.88rem}
+        th,td{padding:8px}
+        h1{font-size:2.3rem}
+      }
+      @page{size:A4;margin:16mm 15mm 18mm}
+      @media print{
+        body{background:#fff;color:#111827;font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+        .progress,aside,.pdf-action,button,.top,iframe{display:none!important}
+        header{padding:0 0 14pt;color:#111827;background:#fff!important;border-bottom:2px solid var(--primary)}
+        .hero{max-width:none}.eyebrow{color:var(--primary);opacity:1}
+        h1{color:#111827;font-size:26pt}.hero p{color:#374151;font-size:11pt}
+        .notice{margin:12pt 0 0;padding:10pt;color:#1f2937;background:#f3f4f6;border:1px solid #d1d5db}
+        .layout{display:block;max-width:none;margin:0;padding:12pt 0 0}
+        section.topic{margin:0;padding:14pt 0;border:0;border-bottom:1px solid #9ca3af;border-radius:0;box-shadow:none;break-inside:auto}
+        .topic-head,h2,h3{break-after:avoid-page}h2{font-size:17pt}h3{font-size:12pt}
+        p,ul,ol{orphans:3;widows:3}
+        li,tr,.concept-card,.definition,.abstention-rule,.tip,.uml-visualizer,pre{break-inside:avoid-page}
+        pre{overflow:visible;padding:10pt;color:#111827;background:#f3f4f6;border:1px solid #cbd5e1;border-radius:4px;font-size:8pt;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+        .uml-visualizer{overflow:visible}
+        .citation{color:#374151;background:#f3f4f6;border-color:#d1d5db}
+        a{color:#111827;text-decoration:none}
+        footer{padding:14pt 0 0;border-top:1px solid #9ca3af}
+      }
+        .runner-panel{
+          margin:16px 0 24px;padding:14px;border:1px solid var(--border);
+          border-radius:12px;background:#f8fafc;
+        }
+        .runner-title{font-weight:800;margin:0 0 8px}
+        .code-editor{
+          display:block;width:100%;min-height:260px;resize:vertical;padding:14px;
+          border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--code);
+          font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+          font-size:.84rem;line-height:1.55;tab-size:4;
+        }
+        .runner-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px}
+        .execution-output{
+          min-height:56px;max-height:220px;overflow:auto;margin-top:10px;padding:12px;
+          border:1px solid var(--border);border-radius:10px;background:#0f172a;color:#e2e8f0;
+          font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+          font-size:.82rem;line-height:1.5;white-space:pre-wrap;
+        }
+        .runner-note{color:var(--muted);font-size:.88rem}
+        button:disabled{opacity:.65;cursor:wait}
+        .learning-visual{
+          margin:22px 0;padding:20px;border:1px solid var(--border);
+          border-radius:14px;background:var(--surface-2);
+        }
+        .learning-visual-title{margin:0 0 14px;text-align:center;font-weight:800}
+        .flow-track{
+          display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;
+        }
+        .flow-node{
+          min-width:130px;padding:13px 16px;border:1px solid var(--border);
+          border-radius:11px;background:#fff;text-align:center;font-weight:700;
+          transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+        }
+        .flow-node.active{
+          transform:translateY(-4px);border-color:var(--primary-2);
+          box-shadow:0 10px 18px rgba(20,184,166,.2);
+        }
+        .flow-arrow{color:var(--primary);font-size:1.4rem;font-weight:900}
+        .state-track{
+          display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;
+        }
+        .state-node{
+          padding:12px;border:2px solid var(--border);border-radius:10px;
+          background:#fff;text-align:center;font-weight:700;transition:.3s ease;
+        }
+        .state-node.active{
+          border-color:var(--primary);background:#ccfbf1;
+          box-shadow:0 8px 16px rgba(20,184,166,.16);transform:scale(1.03);
+        }
+        @media(max-width:650px){
+          .learning-visual{padding:15px}
+          .state-track{grid-template-columns:repeat(2,minmax(0,1fr))}
+          .flow-arrow{transform:rotate(90deg)}
+        }
+        @media print{
+          .runner-panel,.learning-visual button{display:none!important}
+          .learning-visual{break-inside:avoid-page}
+        }
+    </style>
+</head>
+<body>
+  <a href="index.html" style="position:fixed;top:14px;left:14px;z-index:1100;padding:8px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;color:#fff;background:rgba(15,23,42,.72);font-size:.82rem;font-weight:700;text-decoration:none;backdrop-filter:blur(8px)">Dashboard</a>
+
+<div class="progress" id="progress"></div>
+
+<header>
+    <div class="hero">
+        <div class="eyebrow">ITMBU University • Computer Science &amp; Engineering</div>
+        <h1>Unit 5: Class Modeling</h1>
+        <p>Study guide to UML and class modeling, with practical extensions on Java I/O, exception handling, and multithreading.</p>
+        <div class="notice">
+            <strong>Source boundary:</strong> The supplied slides list some subjects without enough accompanying explanation to expand them reliably: <em>values and attributes, additional UML representations and examples, association ordering/bag/sequence, and Slides 13, 19, and 21</em>. Related explanations below are clearly presented as learning examples rather than additional claims from the slides.
+        </div>
+        <div class="pdf-action">
+            <button type="button" onclick="window.print()">Download as PDF</button>
+            <span>In the print dialog, choose <strong>Save as PDF</strong> as the destination.</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside>
+        <h2>Unit Navigation</h2>
+        <a href="#uml">1. UML</a>
+        <a href="#identifiers">2. Object Identifiers</a>
+        <a href="#operations">3. Operations &amp; Methods</a>
+        <a href="#associations">4. Links &amp; Associations</a>
+        <a href="#generalization">5. Generalization</a>
+        <a href="#io-programming">6. Java I/O Programming</a>
+        <a href="#exception-handling">7. Exception Handling</a>
+        <a href="#multithreading">8. Multithreading</a>
+        <a href="#summary">9. Study Checklist</a>
+    </aside>
+
+    <main>
+    <section class="topic" id="uml">
+        <div class="topic-head"><div><div class="topic-number">Topic 1</div><h2>UML: Unified Modeling Language</h2></div></div>
+        <div class="concept-card">
+            <p><strong>UML (Unified Modeling Language)</strong> is an OMG Standard <span class="citation">[Slide 3: UML representation of classes/objects]</span>.</p>
+            <ul>
+                <li>It is an Object-Oriented (O.O) Visual Modeling language <span class="citation">[Slide 3: UML representation of classes/objects]</span>.</li>
+                <li>Used for Class/object representation <span class="citation">[Slide 3: UML representation of classes/objects]</span>.</li>
+            </ul>
+        </div>
+        <p>
+            A visual model lets a team discuss a system before focusing on implementation.
+            A class diagram describes the kinds of objects in a domain and the relationships
+            between those kinds; an object-level view describes particular instances and
+            their values. In this way, a diagram can communicate the design without requiring
+            every reader to inspect source code.
+        </p>
+        <h3>Reading a Simple Class Model</h3>
+        <p>A common UML class box is divided into compartments:</p>
+        <ol>
+            <li><strong>Class name:</strong> identifies the modeled kind of object.</li>
+            <li><strong>Attributes:</strong> name the information represented by each object, often written as <code>name: Type</code>.</li>
+            <li><strong>Operations:</strong> name the services available through the class, often written with parameters and a result type.</li>
+        </ol>
+        <pre><code>Student
+-------------------------
+studentId: int
+name: String
+-------------------------
+enroll(course: Course): void</code></pre>
+        <div class="tip">
+            <strong>Modeling tip:</strong> Use a class to describe shared structure and behavior;
+            use an object when you need to talk about one particular instance. Keep a diagram
+            at the level of detail needed to answer the design question.
+        </div>
+    </section>
+
+    <section class="topic" id="identifiers">
+        <div class="topic-head"><div><div class="topic-number">Topic 2</div><h2>Object Identifiers</h2></div></div>
+        <p>In class modeling, objects identifiers are implicit <span class="citation">[Slide 5: Object identifiers]</span>. Objects that belong to the same class and have the exact same attributes and values may still be different, individual objects <span class="citation">[Slide 5: Object identifiers]</span>.</p>
+        <p>
+            An identifier represents <em>which object</em> is being discussed; its attribute
+            values describe <em>what that object is like</em>. These are different ideas:
+            two library copies may both have the title “Java Basics” and the same edition,
+            but they are still two separately tracked copies.
+        </p>
+        <div class="concept-card">
+            <strong>Keep identity separate from state:</strong>
+            <ul>
+                <li><strong>Identity:</strong> distinguishes one object from every other object.</li>
+                <li><strong>State:</strong> the current values of that object's attributes.</li>
+                <li><strong>Class membership:</strong> says which common structure and operations the object follows.</li>
+            </ul>
+            A class model can treat identity as implicit even when an implementation later
+            uses a database key or another explicit identifier.
+        </div>
+        <p>
+            Changing an object's state does not automatically make it a different object.
+            Likewise, matching attribute values do not by themselves prove that two
+            references identify the same object.
+        </p>
+    </section>
+
+    <section class="topic" id="operations">
+        <div class="topic-head"><div><div class="topic-number">Topic 3</div><h2>Operations and Methods</h2></div></div>
+        
+        <h3>3.1 Operations</h3>
+        <p>An operation is a function or procedure that may be applied to or by objects in a class <span class="citation">[Slide 6: Operations and Methods]</span>.</p>
+        <ul>
+            <li>Each operation has a target object as an implicit parameter <span class="citation">[Slide 6: Operations and Methods]</span>.</li>
+            <li>All objects in a class share the same operations <span class="citation">[Slide 6: Operations and Methods]</span>.</li>
+            <li>The behavior of the operation depends on the class of its target <span class="citation">[Slide 6: Operations and Methods]</span>.</li>
+            <li><strong>Polymorphic Operations:</strong> The same operation may apply to many different classes. Such an operation is POLYMORPHIC <span class="citation">[Slide 6: Operations and Methods]</span>.</li>
+        </ul>
+        <p>
+            Think of an operation as the service promised by a class, rather than the
+            instructions used to perform it. A caller asks a target object to perform an
+            operation; the target is implicit in the request, while any additional
+            arguments provide the other information needed for the request.
+        </p>
+        <div class="tip">
+            <strong>Example:</strong> A <code>BankAccount</code> class might offer
+            <code>deposit(amount)</code>. The particular account receiving the deposit is
+            the target object; <code>amount</code> is an explicit argument. Other account
+            classes could offer the same operation while implementing their rules differently.
+        </div>
+
+        <h3>3.2 Methods</h3>
+        <p>A method is the implementation of an operation for a class <span class="citation">[Slide 7: Operations and Methods]</span>.</p>
+        <ul>
+            <li>A different piece of code may implement each method <span class="citation">[Slide 7: Operations and Methods]</span>.</li>
+            <li>An operation may have arguments in addition to its target object, which act as placeholders for values and/or for objects <span class="citation">[Slide 7: Operations and Methods]</span>.</li>
+            <li><strong>Signature:</strong> When an operation has methods on several classes, these methods must have the same SIGNATURE: the number and types of arguments, and the type of result value <span class="citation">[Slide 7: Operations and Methods]</span>.</li>
+        </ul>
+        <p>
+            An operation can therefore be understood as the model-level contract, while
+            a method is the class-specific implementation of that contract. Two classes
+            can provide different method bodies for the same polymorphic operation while
+            presenting a consistent signature to callers.
+        </p>
+        <pre><code>Operation in the model: calculateArea()
+
+Circle method:    area = π × radius × radius
+Rectangle method: area = width × height</code></pre>
+        <p>
+            The example illustrates the distinction: callers use the common operation,
+            but each class supplies behavior appropriate to its own data.
+        </p>
+    </section>
+
+    <section class="topic" id="associations">
+        <div class="topic-head"><div><div class="topic-number">Topic 4</div><h2>Links and Associations</h2></div></div>
+        
+        <p><strong>Link:</strong> A physical or conceptual connection among objects <span class="citation">[Slide 9: Links and Association concepts]</span>.</p>
+        <ul>
+            <li>Most links relate two objects, but some links relate three or more objects <span class="citation">[Slide 9: Links and Association concepts]</span>.</li>
+            <li>Defined as a tuple (a list of objects) <span class="citation">[Slide 9: Links and Association concepts]</span>.</li>
+            <li>A link is an instance of an association <span class="citation">[Slide 9: Links and Association concepts]</span>.</li>
+        </ul>
+
+        <p><strong>Association:</strong> A description of a group of links with common structure and semantics <span class="citation">[Slide 10: Links and Association concepts]</span>.</p>
+        <ul>
+            <li>Denoted by a line in UML <span class="citation">[Slide 10: Links and Association concepts]</span>.</li>
+            <li>Its name is optional if the model is unambiguous <span class="citation">[Slide 10: Links and Association concepts]</span>.</li>
+        </ul>
+        <p>
+            The distinction is similar to the difference between an individual connection
+            and the rule describing a family of connections: a link joins particular
+            objects, while an association describes the shared meaning and structure of
+            links between classes. An association can connect more than two classes when
+            the modeled fact depends on all participants together.
+        </p>
+
+        <h3>4.1 Multiplicity</h3>
+        <p>Multiplicity specifies the number of instances of one class that may relate to a single instance of the associated class <span class="citation">[Slide 14: Multiplicity]</span>.</p>
+        <p>UML diagrams explicitly list multiplicity at the end of association lines using intervals <span class="citation">[Slide 14: Multiplicity]</span>:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Notation</th>
+                    <th>Meaning <span class="citation">[Slide 14: Multiplicity]</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>1</code></td><td>Exactly one</td></tr>
+                <tr><td><code>0..1</code></td><td>Zero or one</td></tr>
+                <tr><td><code>1..*</code></td><td>One or more</td></tr>
+                <tr><td><code>0..*</code></td><td>Zero or more</td></tr>
+                <tr><td><code>3..5</code></td><td>Three to five inclusive</td></tr>
+            </tbody>
+        </table>
+        <p>
+            Read a multiplicity at one end as the permitted number of objects at that end
+            for one object at the opposite end. For the Student–Course illustration below,
+            the labels indicate the permitted counts for the association as drawn. Always
+            read the label at the end you are interpreting; the two ends answer different
+            questions.
+        </p>
+        <ul>
+            <li><code>1</code> requires exactly one related object.</li>
+            <li><code>0..1</code> permits no related object or one related object.</li>
+            <li><code>0..*</code> permits none, one, or many related objects.</li>
+            <li><code>1..*</code> requires at least one related object.</li>
+        </ul>
+
+        <!-- Interactive UML Visualizer for Association & Multiplicity -->
+        <div class="uml-visualizer">
+            <div class="uml-class">
+                <div class="uml-header">Student</div>
+                <div class="uml-body">- studentId: int<br>- name: String</div>
+                <div class="uml-methods">+ enroll(Course)</div>
+            </div>
+            
+            <div class="uml-relation">
+                <div class="line">
+                    <span class="multiplicity-start">1..*</span>
+                    <span class="multiplicity-end">0..*</span>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-header">Course</div>
+                <div class="uml-body">- courseCode: String<br>- credits: int</div>
+                <div class="uml-methods">+ addStudent(Student)</div>
+            </div>
+        </div>
+        <p style="text-align:center; font-size: 0.9em; color: #555;">A Student can be associated with zero or more Courses; each Course is associated with one or more Students, according to the multiplicities shown.</p>
+
+        <h3>4.2 Association Class</h3>
+        <p>UML offers the ability to describe links of association with attributes like any class <span class="citation">[Slide 16: Association class]</span>. An association class is an association that is also a class <span class="citation">[Slide 16: Association class]</span>.</p>
+        <p>
+            Use an association class when a fact belongs to the relationship itself rather
+            than to either endpoint alone. In a student-course model, for example, a
+            particular student's enrollment in a particular course could have its own
+            attributes such as term or result. Those values describe that enrollment,
+            not the student in general or the course in general.
+        </p>
+        <pre><code>Student  1..* -------- 0..*  Course
+                 |
+             Enrollment
+             term: String
+             result: String</code></pre>
+        <div class="tip">
+            <strong>Modeling check:</strong> If you are tempted to store the same
+            relationship-specific value on one endpoint, ask whether that value could
+            differ for each relationship. If it can, an association class may better
+            represent the model.
+        </div>
+    </section>
+
+    <section class="topic" id="generalization">
+        <div class="topic-head"><div><div class="topic-number">Topic 5</div><h2>Generalization / Inheritance</h2></div></div>
+        <p>Generalization (Inheritance) is used for three primary purposes <span class="citation">[Slide 20: Use of generalization]</span>:</p>
+        
+        <ol>
+            <li><strong>Support of Polymorphism:</strong> Increases the flexibility of software. Adding a new subclass automatically inherits superclass behavior <span class="citation">[Slide 20: Use of generalization]</span>.</li>
+            <li><strong>Structuring the Description of Objects:</strong> Forms a taxonomy (classification), organizing objects according to their similarities. It is much more profound than modeling each class individually and in isolation of other similar classes <span class="citation">[Slide 20: Use of generalization]</span>.</li>
+            <li><strong>Enabling Code Reuse:</strong> Reuse is more productive than repeatedly writing code from scratch <span class="citation">[Slide 20: Use of generalization]</span>.</li>
+        </ol>
+        <p>
+            Generalization groups specialized classes under a more general superclass.
+            The superclass captures common properties or behavior; each subclass
+            represents a more specific kind and can add or specialize its own behavior.
+            This creates an “is-a” classification: a <code>Dog</code> is an
+            <code>Animal</code>, for example.
+        </p>
+        <div class="concept-card">
+            <strong>What changes when a subclass is added?</strong>
+            <ul>
+                <li>The superclass remains the shared, general description.</li>
+                <li>The new subclass inherits the common contract and can provide its own implementation.</li>
+                <li>Code that works with the superclass can use instances of the subclass, supporting polymorphism.</li>
+            </ul>
+            Generalization is useful when the classes genuinely share a meaningful
+            category; it should not be used only to avoid a small amount of duplicated code.
+        </div>
+
+        <!-- Interactive Java Code Playground -->
+        <h3>Interactive Code Playground: Polymorphism & Inheritance</h3>
+        <p>Demonstrating the concept of Polymorphism and Inheritance as described in the slides.</p>
+<pre><code>// Demonstrating Generalization and Polymorphism [Slide 6, 20]
+abstract class Animal {
+    // Operation with target object as implicit parameter [Slide 6]
+    public abstract void makeSound(); 
+}
+
+class Dog extends Animal {
+    // Method: Implementation of an operation for a class [Slide 7]
+    @Override
+    public void makeSound() {
+        System.out.println("Bark!");
+    }
+}
+
+class Cat extends Animal {
+    // Different piece of code implements each method [Slide 7]
+    @Override
+    public void makeSound() {
+        System.out.println("Meow!");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Polymorphism: Same operation applies to different classes [Slide 6]
+        Animal myDog = new Dog();
+        Animal myCat = new Cat();
+        
+        myDog.makeSound(); // Outputs: Bark!
+        myCat.makeSound(); // Outputs: Meow!
+    }
+}
+</code></pre>
+        <iframe src="https://onecompiler.com/embed/java" width="100%" height="500px" style="border:1px solid #ddd; border-radius: 8px;"></iframe>
+    </section>
+
+    <section class="topic" id="io-programming">
+        <div class="topic-head"><div><div class="topic-number">Topic 6</div><h2>Java I/O Programming</h2></div></div>
+        <div class="definition">
+            Input and output (I/O) move data between a Java program and a source or
+            destination such as memory, a file, a keyboard, or another program. A stream
+            provides a consistent way to process that data in sequence. Files make data
+            persistent after a program finishes.
+        </div>
+        <p class="runner-note">
+            The editors below send complete Java programs to the local runner. Open this
+            page at <code>http://127.0.0.1:8000/Unit5ClassModeling.html</code> while
+            <code>run_java_server.py</code> is running to use the Run Java buttons.
+        </p>
+        <p>
+            A stream has a direction: an input stream reads data into a program, while an
+            output stream writes data out. Streams can be connected in a pipeline so that
+            one object adds buffering, conversion, or another useful operation.
+        </p>
+        <div class="learning-visual">
+            <div class="learning-visual-title">How an I/O stream moves data</div>
+            <div class="flow-track" id="streamFlow">
+                <div class="flow-node">Source<br><small>keyboard / file / memory</small></div>
+                <div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Input stream<br><small>read</small></div>
+                <div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Java program</div>
+                <div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Output stream<br><small>write</small></div>
+                <div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Destination<br><small>screen / file / network</small></div>
+            </div>
+            <div style="text-align:center;margin-top:12px">
+                <button type="button" onclick="animateFlow('streamFlow')">Animate data flow</button>
+            </div>
+        </div>
+        <p>
+            Variables and arrays keep data only while the program is running and the
+            values remain in scope. A file stores persistent data on secondary storage.
+            In a traditional record-based view, a file contains related records, and
+            records contain fields; applications choose whether to process a file as
+            bytes, characters, or structured values.
+        </p>
+
+        <h3>Byte Streams and Character Streams</h3>
+        <table>
+            <thead>
+                <tr><th>Data to process</th><th>Read with</th><th>Write with</th><th>Typical use</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Bytes</td><td><code>InputStream</code></td><td><code>OutputStream</code></td><td>Images, audio, and other binary data</td></tr>
+                <tr><td>Text characters</td><td><code>Reader</code></td><td><code>Writer</code></td><td>Text files and character data</td></tr>
+            </tbody>
+        </table>
+        <div class="concept-card">
+            <strong>Common stream operations:</strong>
+            <ul>
+                <li><code>InputStream.read()</code> reads one byte (or returns <code>-1</code> at end of stream); overloads can fill a byte array.</li>
+                <li><code>OutputStream.write(...)</code> writes one or more bytes. <code>flush()</code> pushes buffered output onward, and <code>close()</code> releases the resource.</li>
+                <li><code>Reader.read(...)</code> reads characters; <code>Writer.write(...)</code> writes them. <code>BufferedReader.readLine()</code> is useful for line-oriented text.</li>
+                <li>Input streams move data from a source into the program; output streams move data from the program to a destination.</li>
+            </ul>
+        </div>
+        <p>
+            Classes such as <code>FileInputStream</code> and
+            <code>FileOutputStream</code> handle bytes. <code>FileReader</code> and
+            <code>FileWriter</code> work with characters; for predictable text encoding,
+            prefer <code>Files.newBufferedReader</code> or
+            <code>Files.newBufferedWriter</code> with an explicit charset such as UTF-8.
+            A <code>BufferedReader</code>, <code>BufferedInputStream</code>, or related
+            buffered wrapper reduces repeated low-level reads and writes.
+        </p>
+        <div class="concept-card">
+            <strong>Useful I/O classes:</strong>
+            <ul>
+                <li><code>File</code> describes a path and supports checks such as whether it exists; it is not itself a stream of file contents.</li>
+                <li><code>DataInputStream</code> and <code>DataOutputStream</code> read and write primitive values in a defined binary format.</li>
+                <li><code>ObjectInputStream</code> and <code>ObjectOutputStream</code> can restore and save serializable object graphs. Only deserialize data from trusted sources.</li>
+                <li>I/O operations can fail, so handle their checked <code>IOException</code> rather than assuming every read or write succeeds.</li>
+            </ul>
+        </div>
+        <h3>Choosing a Stream Class</h3>
+        <table>
+            <thead><tr><th>Class or family</th><th>Role</th><th>Example use</th></tr></thead>
+            <tbody>
+                <tr><td><code>FileInputStream</code> / <code>FileOutputStream</code></td><td>Byte-oriented file input and output</td><td>Copying a binary file</td></tr>
+                <tr><td><code>FileReader</code> / <code>FileWriter</code></td><td>Character-oriented file input and output</td><td>Reading or writing text</td></tr>
+                <tr><td><code>BufferedInputStream</code> / <code>BufferedOutputStream</code></td><td>Buffer byte operations</td><td>Reducing small repeated device operations</td></tr>
+                <tr><td><code>BufferedReader</code> / <code>BufferedWriter</code></td><td>Buffer character operations</td><td>Reading lines or efficiently writing text</td></tr>
+                <tr><td><code>InputStreamReader</code> / <code>OutputStreamWriter</code></td><td>Bridge byte streams and character streams</td><td>Decode or encode text with a chosen charset</td></tr>
+                <tr><td><code>PushbackInputStream</code> / <code>PushbackReader</code></td><td>Read a value and push it back for a later read</td><td>Simple look-ahead while parsing</td></tr>
+                <tr><td><code>PrintStream</code> / <code>PrintWriter</code></td><td>Provide convenient print and println operations</td><td>Formatted text output</td></tr>
+                <tr><td><code>DataInputStream</code> / <code>DataOutputStream</code></td><td>Read or write primitive values in binary form</td><td>Storing typed values in a known order</td></tr>
+                <tr><td><code>RandomAccessFile</code></td><td>Read and write at positions in a file</td><td>Updating records without sequentially copying the entire file</td></tr>
+                <tr><td><code>StringReader</code> / <code>StringWriter</code>, character-array and pipe streams</td><td>Read from or write to in-memory text, arrays, or a connected stream</td><td>Testing, buffering, or transferring characters between threads</td></tr>
+            </tbody>
+        </table>
+        <p>
+            The <code>java.io</code> package groups many classes by direction and data
+            type. Abstract base classes such as <code>InputStream</code>,
+            <code>OutputStream</code>, <code>Reader</code>, and <code>Writer</code>
+            define common operations; concrete subclasses connect those operations to
+            files, memory, pipes, or other sources and destinations.
+        </p>
+        <table>
+            <thead><tr><th>Base type</th><th>Common operations</th><th>What they do</th></tr></thead>
+            <tbody>
+                <tr><td><code>InputStream</code></td><td><code>read()</code>, <code>read(byte[])</code>, <code>skip(n)</code>, <code>available()</code>, <code>close()</code></td><td>Read bytes, skip input, estimate immediately readable bytes, and close the stream</td></tr>
+                <tr><td><code>OutputStream</code></td><td><code>write(int)</code>, <code>write(byte[])</code>, <code>flush()</code>, <code>close()</code></td><td>Write bytes, push buffered output, and close the stream</td></tr>
+                <tr><td><code>Reader</code></td><td><code>read()</code>, <code>read(char[])</code>, <code>skip(n)</code>, <code>close()</code></td><td>Read characters from a text source</td></tr>
+                <tr><td><code>Writer</code></td><td><code>write(int)</code>, <code>write(char[])</code>, <code>write(String)</code>, <code>flush()</code>, <code>close()</code></td><td>Write characters or text to a destination</td></tr>
+            </tbody>
+        </table>
+        <p>
+            <code>File</code> represents a path and provides file and directory
+            operations such as checking existence or requesting creation; it does not
+            itself read or write the file's contents. Use a stream or reader/writer for
+            that. File constructors and I/O operations can fail, so account for
+            <code>FileNotFoundException</code> and other <code>IOException</code>
+            conditions.
+        </p>
+        <p>
+            Depending on the JDK version, useful <code>File</code> operations include
+            <code>exists()</code>, <code>isFile()</code>, <code>isDirectory()</code>,
+            <code>createNewFile()</code>, <code>mkdir()</code>, <code>list()</code>,
+            and <code>delete()</code>. Prefer the newer <code>Path</code> and
+            <code>Files</code> APIs for new code, but the core distinction remains:
+            paths identify locations, and stream objects transfer the contents.
+        </p>
+
+        <h3>Plan a File Operation</h3>
+        <div class="learning-visual">
+            <div class="learning-visual-title">Steps from a path to processed data</div>
+            <div class="flow-track" id="fileFlow">
+                <div class="flow-node">Choose path</div><div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Choose bytes or characters</div><div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Create / open stream</div><div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Read or write</div><div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Close resource</div>
+            </div>
+            <div style="text-align:center;margin-top:12px">
+                <button type="button" onclick="animateFlow('fileFlow')">Animate file workflow</button>
+            </div>
+        </div>
+        <p>
+            To create and use a disk file, decide its name and location, select the data
+            representation, select the appropriate stream family, open the file, perform
+            the operation, and close the stream. A file stream may be created directly
+            from a path, or a <code>File</code> object may first describe the path and
+            then be passed to the stream constructor. Append mode preserves existing
+            content; the default output mode generally replaces it.
+        </p>
+        <pre><code>// Direct: provide a path to the stream constructor
+FileInputStream input = new FileInputStream("records.dat");
+
+// Indirect: describe the path first, then open its stream
+File file = new File("records.dat");
+FileInputStream anotherInput = new FileInputStream(file);</code></pre>
+        <p>
+            These fragments illustrate the two construction styles; real code should
+            declare the checked I/O error and close each resource, preferably with
+            try-with-resources.
+        </p>
+
+        <h3>Read and Write Bytes in Memory</h3>
+        <p>
+            The same stream abstractions can work with memory as well as files. This small
+            example copies bytes from an input stream into an output stream and prints
+            the decoded text.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable byte-stream example</div>
+            <textarea class="code-editor" spellcheck="false">import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        byte[] source = "Java streams".getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream destination = new ByteArrayOutputStream();
+
+        try (ByteArrayInputStream input = new ByteArrayInputStream(source)) {
+            int value;
+            while ((value = input.read()) != -1) {
+                destination.write(value);
+            }
+        }
+
+        String result = destination.toString(StandardCharsets.UTF_8);
+        System.out.println(result);
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+                <span class="runner-note">Run this page from the local study server.</span>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+
+        <h3>Copy a Binary File with Byte Streams</h3>
+        <p>
+            This example writes sample bytes to one temporary file, copies them with
+            <code>FileInputStream</code> and <code>FileOutputStream</code>, compares
+            the result, and removes both temporary files. The same pattern applies to
+            other binary file content.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable file-copy example</div>
+            <textarea class="code-editor" spellcheck="false">import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Path source = Files.createTempFile("java-source-", ".bin");
+        Path copy = Files.createTempFile("java-copy-", ".bin");
+        byte[] content = {10, 20, 30, 40, 50};
+
+        try {
+            Files.write(source, content);
+            try (FileInputStream input = new FileInputStream(source.toFile());
+                 FileOutputStream output = new FileOutputStream(copy.toFile())) {
+                byte[] buffer = new byte[1024];
+                int count;
+                while ((count = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, count);
+                }
+            }
+            System.out.println("Copy matches source: "
+                    + Arrays.equals(content, Files.readAllBytes(copy)));
+        } finally {
+            Files.deleteIfExists(source);
+            Files.deleteIfExists(copy);
+        }
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+
+        <h3>Primitive Data Streams and Random File Access</h3>
+        <p>
+            Data streams preserve primitive types by writing values in a known order;
+            the reader must consume them in that same order. A
+            <code>RandomAccessFile</code> supports seeking to a file position before
+            reading or writing, unlike a strictly sequential stream.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable typed-data and random-access example</div>
+            <textarea class="code-editor" spellcheck="false">import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (DataOutputStream output = new DataOutputStream(bytes)) {
+            output.writeInt(42);
+            output.writeDouble(3.5);
+        }
+
+        try (DataInputStream input =
+                 new DataInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            System.out.println("Integer: " + input.readInt());
+            System.out.println("Double: " + input.readDouble());
+        }
+
+        Path file = Files.createTempFile("java-random-", ".dat");
+        try {
+            try (RandomAccessFile random = new RandomAccessFile(file.toFile(), "rw")) {
+                random.writeInt(2026);
+                random.seek(0);
+                System.out.println("At position zero: " + random.readInt());
+            }
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+
+        <h3>Text Files, Buffering, and Resource Cleanup</h3>
+        <p>
+            Use try-with-resources for streams and readers. Java closes each declared
+            resource automatically, including when an exception occurs. The example
+            creates a temporary UTF-8 text file, reads it back, and deletes it afterward.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable buffered file example</div>
+            <textarea class="code-editor" spellcheck="false">import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Path file = Files.createTempFile("java-study-", ".txt");
+        try {
+            try (BufferedWriter writer =
+                     Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
+                writer.write("Persistent text");
+                writer.newLine();
+                writer.write("Read it back safely");
+            }
+
+            try (BufferedReader reader =
+                     Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+                <span class="runner-note">The temporary file is deleted when the example finishes.</span>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+
+        <h3>Character Streams with <code>FileReader</code> and <code>FileWriter</code></h3>
+        <p>
+            Character streams read and write text rather than treating the content as
+            arbitrary bytes. This example uses UTF-8 constructors and a
+            <code>BufferedReader</code> to read complete lines.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable character-stream example</div>
+            <textarea class="code-editor" spellcheck="false">import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Path file = Files.createTempFile("java-characters-", ".txt");
+        try {
+            try (FileWriter writer =
+                     new FileWriter(file.toFile(), StandardCharsets.UTF_8)) {
+                writer.write("First line");
+                writer.write(System.lineSeparator());
+                writer.write("Second line");
+            }
+
+            try (BufferedReader reader = new BufferedReader(
+                    new FileReader(file.toFile(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+
+        <h3>Object Serialization</h3>
+        <p>
+            Serialization converts an object's state into a byte representation that can
+            later be reconstructed. A class must implement <code>Serializable</code>;
+            static fields are not part of an individual object's serialized state. This
+            example round-trips an object through memory rather than saving a file.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable serialization example</div>
+            <textarea class="code-editor" spellcheck="false">import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class Main {
+    static class Student implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private final String name;
+
+        Student(String name) {
+            this.name = name;
+        }
+    }
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
+            output.writeObject(new Student("Mira"));
+        }
+
+        try (ObjectInputStream input =
+                 new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            Student restored = (Student) input.readObject();
+            System.out.println("Restored student: " + restored.name);
+        }
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+    </section>
+
+    <section class="topic" id="exception-handling">
+        <div class="topic-head"><div><div class="topic-number">Topic 7</div><h2>Exception Handling</h2></div></div>
+        <div class="definition">
+            An exception is an object that represents an unusual condition during program
+            execution. Handling it lets a program recover, report a useful explanation,
+            or stop in a controlled way instead of failing without context.
+        </div>
+        <h3>Errors, Exceptions, and the Exception Hierarchy</h3>
+        <table>
+            <thead><tr><th>Kind of problem</th><th>When it appears</th><th>Typical example</th></tr></thead>
+            <tbody>
+                <tr><td>Compile-time error</td><td>While <code>javac</code> checks source code; no runnable class is produced until compilation succeeds</td><td>Missing semicolon, misspelled identifier, undeclared variable, incompatible assignment</td></tr>
+                <tr><td>Runtime exception</td><td>While a compiled program executes</td><td>Divide by zero or accessing an invalid array index</td></tr>
+                <tr><td>Logic error</td><td>The program runs but computes or displays the wrong result</td><td>Using an incorrect formula or condition</td></tr>
+            </tbody>
+        </table>
+        <p>
+            When compilation reports several messages, fix the earliest meaningful
+            error and compile again; one source error can trigger additional diagnostics.
+            Runtime failures are different: the program compiled, but an operation or
+            assumption failed while it was running.
+        </p>
+        <ul>
+            <li><strong>Compile-time errors</strong> are detected by the compiler, for example a missing semicolon, undeclared variable, or incompatible type.</li>
+            <li><strong>Runtime failures</strong> occur while a program runs. A program may also have a logic error that produces an incorrect result without throwing any exception.</li>
+            <li><strong>Checked exceptions</strong> (for example, <code>IOException</code>) must be caught or declared with <code>throws</code>.</li>
+            <li><strong>Unchecked exceptions</strong> are <code>RuntimeException</code> subclasses, such as <code>NullPointerException</code>, <code>ArithmeticException</code>, and <code>NumberFormatException</code>. The compiler does not require them to be caught.</li>
+            <li><code>Error</code> represents serious conditions generally not intended for routine application recovery. It is distinct from <code>Exception</code>.</li>
+        </ul>
+        <div class="learning-visual">
+            <div class="learning-visual-title">Where exception handling fits</div>
+            <div class="flow-track" id="exceptionFlow">
+                <div class="flow-node">Operation may fail</div><div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Exception is thrown</div><div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Matching catch handles it</div><div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Program continues or exits cleanly</div>
+            </div>
+            <div style="text-align:center;margin-top:12px">
+                <button type="button" onclick="animateFlow('exceptionFlow')">Animate exception flow</button>
+            </div>
+        </div>
+        <h3>Common Runtime Exceptions</h3>
+        <table>
+            <thead><tr><th>Exception</th><th>Common cause</th></tr></thead>
+            <tbody>
+                <tr><td><code>ArithmeticException</code></td><td>Invalid integer arithmetic, such as division by zero</td></tr>
+                <tr><td><code>ArrayIndexOutOfBoundsException</code></td><td>Reading or writing an array position outside its valid indices</td></tr>
+                <tr><td><code>ArrayStoreException</code></td><td>Storing an object of an incompatible runtime type in an array</td></tr>
+                <tr><td><code>ClassCastException</code></td><td>Casting an object to a type it does not have</td></tr>
+                <tr><td><code>IllegalArgumentException</code></td><td>Passing an argument outside a method's allowed range or values</td></tr>
+                <tr><td><code>NegativeArraySizeException</code></td><td>Creating an array with a negative length</td></tr>
+                <tr><td><code>NullPointerException</code></td><td>Using a null reference as if it referred to an object</td></tr>
+                <tr><td><code>NumberFormatException</code></td><td>Converting text that is not in the expected numeric format</td></tr>
+                <tr><td><code>StringIndexOutOfBoundsException</code></td><td>Using an invalid index in a string operation</td></tr>
+                <tr><td><code>StackOverflowError</code></td><td>Exhausting the call stack, often from unbounded recursion</td></tr>
+            </tbody>
+        </table>
+        <p>
+            These examples help identify likely causes; they are not a replacement for
+            checking the specific exception message and stack trace. Some older
+            descriptions call stack exhaustion a “stack overflow exception”; in Java it
+            is represented by <code>StackOverflowError</code>, not a
+            <code>RuntimeException</code>.
+        </p>
+        <p>
+            Java exceptions descend from <code>Throwable</code>. Catch the most specific
+            condition that the program can meaningfully handle. In a sequence of catch
+            clauses, a subclass must appear before its superclass or the later catch is
+            unreachable.
+        </p>
+        <h3><code>try</code>, <code>catch</code>, and <code>finally</code></h3>
+        <p>
+            Put operations that may fail in a <code>try</code> block, handle expected
+            failures in matching <code>catch</code> blocks, and use
+            <code>finally</code> for cleanup that must happen regardless of success or
+            failure. Prefer try-with-resources for closing I/O resources.
+        </p>
+        <div class="concept-card">
+            A <code>try</code> block holds statements that may throw. Java checks its
+            <code>catch</code> clauses in order and enters the first compatible handler;
+            if none matches, the exception propagates to the caller. A
+            <code>finally</code> block runs as control leaves the try/catch construct
+            under normal exception flow. Resources that implement
+            <code>AutoCloseable</code> should generally use try-with-resources instead
+            of manual cleanup in <code>finally</code>.
+        </div>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable multiple-catch example</div>
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        String[] values = {"42", "0", "not-a-number"};
+
+        for (String value : values) {
+            try {
+                int number = Integer.parseInt(value);
+                System.out.println(100 / number);
+            } catch (NumberFormatException error) {
+                System.out.println("Not an integer: " + value);
+            } catch (ArithmeticException error) {
+                System.out.println("Cannot divide by zero");
+            } finally {
+                System.out.println("Finished processing: " + value);
+            }
+        }
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <h3>Multiple Catch Clauses and Multi-Catch</h3>
+        <p>
+            A try block may have several handlers so different failures receive
+            different responses. Order related handlers from the most specific subclass
+            to the more general superclass. When separate exceptions need identical
+            handling, Java's multi-catch syntax can share the handler.
+        </p>
+        <pre><code>try {
+    // parse input and access data
+} catch (NumberFormatException | ArrayIndexOutOfBoundsException error) {
+    System.out.println("Input is invalid");
+} catch (RuntimeException error) {
+    System.out.println("A different runtime problem occurred");
+}</code></pre>
+
+        <h3><code>throw</code>, <code>throws</code>, and Custom Exceptions</h3>
+        <p>
+            Use <code>throw</code> to raise an exception at a particular point. A method's
+            <code>throws</code> clause declares checked exceptions that the caller must
+            handle or pass on. A custom exception can give a domain-specific failure a
+            clear meaning.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable custom-exception example</div>
+            <textarea class="code-editor" spellcheck="false">class InsufficientBalanceException extends Exception {
+    InsufficientBalanceException(String message) {
+        super(message);
+    }
+}
+
+public class Main {
+    static void withdraw(int balance, int amount)
+            throws InsufficientBalanceException {
+        if (amount > balance) {
+            throw new InsufficientBalanceException("Balance is too low");
+        }
+        System.out.println("Remaining balance: " + (balance - amount));
+    }
+
+    public static void main(String[] args) {
+        try {
+            withdraw(100, 35);
+            withdraw(100, 120);
+        } catch (InsufficientBalanceException error) {
+            System.out.println("Withdrawal rejected: " + error.getMessage());
+        }
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <h3>Nested <code>try</code> Blocks</h3>
+        <p>
+            A nested try block can give one operation a local recovery path while an
+            enclosing block handles a different failure. Keep each boundary focused and
+            avoid nesting when a single clear handler is enough.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable nested exception example</div>
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        String[] values = {"27", "not-a-number"};
+        int[] positions = {0, 3};
+
+        for (int i = 0; i < values.length; i++) {
+            try {
+                try {
+                    int number = Integer.parseInt(values[i]);
+                    System.out.println("Parsed: " + number);
+                } catch (NumberFormatException error) {
+                    System.out.println("Invalid number: " + values[i]);
+                }
+                System.out.println("Position: " + positions[i]);
+            } catch (ArrayIndexOutOfBoundsException error) {
+                System.out.println("Position is outside the array");
+            }
+        }
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <div class="tip">
+            Avoid empty catch blocks and do not catch <code>Throwable</code> to hide
+            failures. Include context in error messages, and preserve the original
+            exception when rethrowing a higher-level error. During debugging, read the
+            exception type, message, and stack trace to locate the failing operation;
+            report useful context to users instead of exposing raw traces.
+        </div>
+    </section>
+
+    <section class="topic" id="multithreading">
+        <div class="topic-head"><div><div class="topic-number">Topic 8</div><h2>Multithreading</h2></div></div>
+        <div class="definition">
+            A process is a running program with its own resources; a thread is an
+            independent path of execution within a process. Threads in the same process
+            share memory, which makes communication convenient but means shared state
+            must be coordinated.
+        </div>
+        <table>
+            <thead><tr><th>Term</th><th>What it describes</th></tr></thead>
+            <tbody>
+                <tr><td>Multiprogramming</td><td>Several programs share processor time, with execution switching among them.</td></tr>
+                <tr><td>Multiprocessing</td><td>Multiple processes execute; depending on available processors, work may run in parallel.</td></tr>
+                <tr><td>Process-based multitasking</td><td>Separate processes have separate execution and resource contexts; communication between them uses process-level mechanisms.</td></tr>
+                <tr><td>Thread-based multitasking</td><td>Threads in one process share its memory and resources, while each thread has its own path of execution.</td></tr>
+            </tbody>
+        </table>
+        <p>
+            A single-threaded program performs one execution path at a time. A
+            multithreaded program can make progress on several tasks concurrently. The
+            operating system and Java runtime schedule threads, so their exact execution
+            order is not generally predictable.
+        </p>
+
+        <h3>Creating and Starting a Thread</h3>
+        <p>
+            Put a task in a <code>Runnable</code> and pass it to a <code>Thread</code>,
+            or use an executor for larger applications. Call <code>start()</code> to
+            ask Java to run the task on a new thread; calling <code>run()</code>
+            directly is an ordinary method call on the current thread. The main thread
+            is created automatically when the program starts.
+        </p>
+        <div class="concept-card">
+            <strong>Two introductory ways to define a thread task:</strong>
+            <ol>
+                <li>Implement <code>Runnable</code> and pass an instance to <code>new Thread(task)</code>. This separates the work from the thread object and leaves the class free to extend another class.</li>
+                <li>Extend <code>Thread</code> and override <code>run()</code>. This is concise for a small demonstration, but Java classes can extend only one class, so implementing <code>Runnable</code> is usually more flexible.</li>
+            </ol>
+            In both cases, invoke <code>start()</code> on the thread object to schedule its
+            <code>run()</code> method on a new thread.
+        </div>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable task and <code>join()</code></div>
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        Runnable task = () ->
+            System.out.println("Task ran on " + Thread.currentThread().getName());
+
+        Thread worker = new Thread(task, "worker");
+        worker.start();
+        worker.join();
+        System.out.println("Worker finished");
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+                <span class="runner-note">The worker's line appears before “Worker finished” because main joins it.</span>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable example that extends <code>Thread</code></div>
+            <textarea class="code-editor" spellcheck="false">class MessageThread extends Thread {
+    MessageThread(String name) {
+        super(name);
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Running task: " + getName());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        MessageThread worker = new MessageThread("worker");
+        worker.start();
+        worker.join();
+        System.out.println("Main thread: "
+                + Thread.currentThread().getName());
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+
+        <h3>Thread Lifecycle and Coordination</h3>
+        <p>
+            A thread begins in <code>NEW</code>, becomes <code>RUNNABLE</code> after
+            <code>start()</code>, and eventually reaches <code>TERMINATED</code>.
+            While active it may be <code>BLOCKED</code>, <code>WAITING</code>, or
+            <code>TIMED_WAITING</code>. Java groups ready-to-run and currently running
+            execution under the <code>RUNNABLE</code> state. Methods such as
+            <code>join()</code> let one thread wait for another; interruption is the
+            standard cooperative way to request that a task stop waiting or wrap up.
+        </p>
+        <div class="learning-visual">
+            <div class="learning-visual-title">Java thread states</div>
+            <div class="state-track" id="threadStates">
+                <div class="state-node">NEW<br><small>created, not started</small></div>
+                <div class="state-node">RUNNABLE<br><small>eligible or running</small></div>
+                <div class="state-node">BLOCKED<br><small>waiting for a monitor lock</small></div>
+                <div class="state-node">WAITING<br><small>waiting indefinitely</small></div>
+                <div class="state-node">TIMED_WAITING<br><small>waiting for a time limit</small></div>
+                <div class="state-node">TERMINATED<br><small>run method finished</small></div>
+            </div>
+            <p class="runner-note">
+                Typical transitions: <code>NEW → RUNNABLE → TERMINATED</code>.
+                Lock contention can cause <code>BLOCKED</code>; calls such as
+                <code>wait()</code> or <code>join()</code> can cause
+                <code>WAITING</code>; <code>sleep()</code> and timed waits can cause
+                <code>TIMED_WAITING</code>. The JVM reports both ready and currently
+                executing threads as <code>RUNNABLE</code>.
+            </p>
+            <div style="text-align:center">
+                <button type="button" onclick="animateThreadLifecycle()">Animate a thread's lifecycle</button>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr><th>Method</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>currentThread()</code></td><td>Returns the thread executing the current code</td></tr>
+                <tr><td><code>sleep(milliseconds)</code></td><td>Pauses the current thread for a time; it does not release locks the thread already holds</td></tr>
+                <tr><td><code>isAlive()</code></td><td>Checks whether a started thread has not yet terminated</td></tr>
+                <tr><td><code>join()</code></td><td>Waits for another thread to finish</td></tr>
+                <tr><td><code>interrupt()</code></td><td>Requests cooperative cancellation or interrupts a thread waiting or sleeping</td></tr>
+            </tbody>
+        </table>
+        <p>
+            A thread can inspect itself with <code>Thread.currentThread()</code>, pause
+            with <code>Thread.sleep(...)</code>, and report its priority with
+            <code>getPriority()</code>. Priority values and
+            <code>setPriority(...)</code> are scheduling hints only; they do not
+            guarantee which thread runs first. <code>isAlive()</code> is useful after
+            <code>start()</code> to check whether a thread has finished, while
+            <code>join()</code> waits for completion.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable main-thread and <code>isAlive()</code> example</div>
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        Thread worker = new Thread(() -> {
+            System.out.println("Worker started");
+        }, "worker");
+
+        System.out.println("Before start: " + worker.isAlive());
+        worker.start();
+        worker.join();
+        System.out.println("After join: " + worker.isAlive());
+        System.out.println("Current thread: "
+                + Thread.currentThread().getName());
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <p>
+            An uncaught exception in a worker thread is reported for that thread; it does
+            not automatically become an exception in the main thread. Applications that
+            need to collect task results or failures should use a higher-level
+            coordination mechanism such as an executor and <code>Future</code>.
+        </p>
+        <div class="concept-card">
+            Thread priorities are scheduling hints, not a correctness mechanism; never
+            rely on them to determine output order. The older
+            <code>suspend()</code>, <code>resume()</code>, and <code>stop()</code>
+            methods are deprecated because they can leave shared data inconsistent or
+            locks held. Prefer interruption and shared cancellation signals.
+        </div>
+
+        <h3>Synchronization and Shared State</h3>
+        <p>
+            When multiple threads update the same data, unsynchronized operations can
+            interleave and lose updates. A synchronized method or block acquires an
+            object's monitor, allowing only one thread at a time to execute the
+            protected region for that monitor.
+        </p>
+        <div class="learning-visual">
+            <div class="learning-visual-title">A monitor protects a critical section</div>
+            <div class="flow-track" id="syncFlow">
+                <div class="flow-node">Thread A<br><small>acquires lock</small></div>
+                <div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Shared monitor<br><small>one owner at a time</small></div>
+                <div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Critical section<br><small>updates shared state</small></div>
+                <div class="flow-arrow" aria-hidden="true">→</div>
+                <div class="flow-node">Thread B<br><small>enters after release</small></div>
+            </div>
+            <div style="text-align:center;margin-top:12px">
+                <button type="button" onclick="animateFlow('syncFlow')">Animate lock access</button>
+            </div>
+        </div>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable synchronized counter</div>
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Counter {
+        private int value;
+
+        synchronized void increment() {
+            value++;
+        }
+
+        synchronized int getValue() {
+            return value;
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Counter counter = new Counter();
+        Runnable task = () -> {
+            for (int i = 0; i < 10000; i++) {
+                counter.increment();
+            }
+        };
+
+        Thread first = new Thread(task);
+        Thread second = new Thread(task);
+        first.start();
+        second.start();
+        first.join();
+        second.join();
+
+        System.out.println("Expected: 20000");
+        System.out.println("Actual:   " + counter.getValue());
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <h3>Synchronized Blocks</h3>
+        <p>
+            A synchronized block limits locking to the statements that need protection.
+            All code that guards the same invariant must synchronize on the same lock.
+            Avoid exposing a lock object or holding it while doing slow I/O.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable synchronized-block example</div>
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class SafeTotal {
+        private final Object lock = new Object();
+        private int total;
+
+        void add(int amount) {
+            synchronized (lock) {
+                total += amount;
+            }
+        }
+
+        int get() {
+            synchronized (lock) {
+                return total;
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        SafeTotal total = new SafeTotal();
+        Runnable task = () -> {
+            for (int i = 0; i < 5000; i++) {
+                total.add(1);
+            }
+        };
+        Thread first = new Thread(task);
+        Thread second = new Thread(task);
+        first.start();
+        second.start();
+        first.join();
+        second.join();
+        System.out.println("Total: " + total.get());
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+
+        <h3>Inter-Thread Communication and Deadlock</h3>
+        <p>
+            A thread can call <code>wait()</code> while holding a monitor to release
+            that monitor and pause until another thread signals a condition with
+            <code>notify()</code> or <code>notifyAll()</code>. Always check the condition
+            in a loop: a waiting thread must re-check it after waking. These methods must
+            be called while synchronized on the same object. <code>wait()</code>
+            releases that object's monitor while waiting and reacquires it before
+            returning; <code>sleep()</code> pauses without releasing locks. A notification
+            does not itself release the monitor—the notifying thread releases it when it
+            leaves the synchronized region.
+        </p>
+        <p>
+            A deadlock occurs when threads wait indefinitely for locks held by one
+            another. Consistent lock ordering and keeping synchronized regions small
+            reduce the risk. The following example uses a condition and
+            <code>notifyAll()</code> to coordinate a worker safely.
+        </p>
+        <div class="runner-panel">
+            <div class="runner-title">Runnable wait/notify example</div>
+            <textarea class="code-editor" spellcheck="false">public class Main {
+    static class Gate {
+        private boolean open;
+
+        synchronized void awaitOpen() throws InterruptedException {
+            while (!open) {
+                wait();
+            }
+            System.out.println("Worker passed the gate");
+        }
+
+        synchronized void open() {
+            open = true;
+            notifyAll();
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Gate gate = new Gate();
+        Thread worker = new Thread(() -> {
+            try {
+                gate.awaitOpen();
+            } catch (InterruptedException error) {
+                Thread.currentThread().interrupt();
+            }
+        });
+
+        worker.start();
+        gate.open();
+        worker.join();
+        System.out.println("Coordination complete");
+    }
+}</textarea>
+            <div class="runner-actions">
+                <button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button>
+            </div>
+            <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+    </section>
+
+    <section class="topic" id="summary">
+        <div class="topic-head"><div><div class="topic-number">Unit Summary</div><h2>Class Modeling Study Checklist</h2></div></div>
+        <p>Use this checklist to review how the Unit 5 modeling and Java programming topics fit together:</p>
+        <ol>
+            <li>Use UML as a visual language to describe classes, objects, and their relationships.</li>
+            <li>Distinguish an object's identity from its class and attribute values.</li>
+            <li>Distinguish an operation's modeled contract from a method's implementation.</li>
+            <li>Recognize a link as one connection between objects and an association as the shared description of such connections.</li>
+            <li>Read multiplicity at each association end independently.</li>
+            <li>Use an association class when the relationship itself has attributes.</li>
+            <li>Use generalization to organize related classes, enable polymorphism, and reuse shared behavior.</li>
+            <li>Choose byte streams for binary data and character readers/writers for text; close resources reliably.</li>
+            <li>Distinguish compile-time errors, runtime exceptions, and logic errors, and handle expected failures specifically.</li>
+            <li>Use <code>start()</code> to run a thread, <code>join()</code> to wait for it, and synchronization to protect shared state.</li>
+        </ol>
+        <div class="tip">
+            <strong>Practice:</strong> Model a small course-registration scenario. Identify the
+            classes, give each object a distinct identity, write one operation and its
+            class-specific method, then add the Student–Course association, multiplicities,
+            and any attributes that belong to an individual enrollment. Then write a small
+            Java program that saves and reads text, handles invalid input, and coordinates
+            two worker threads without relying on a particular scheduling order.
+        </div>
+    </section>
+    </main>
+</div>
+
+<footer>ITMBU University • Computer Science &amp; Engineering • Unit 5 Study Guide</footer>
+<button class="top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" aria-label="Back to top">↑</button>
+<script>
+    const progress = document.getElementById("progress");
+    window.addEventListener("scroll", function () {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const percent = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+        progress.style.width = percent + "%";
+    });
+
+    function animateFlow(id) {
+        const visual = document.getElementById(id);
+        if (!visual) return;
+        const nodes = visual.querySelectorAll(".flow-node");
+        const run = Number(visual.dataset.animationRun || "0") + 1;
+        visual.dataset.animationRun = String(run);
+        nodes.forEach(node => node.classList.remove("active"));
+        nodes.forEach((node, index) => {
+            window.setTimeout(() => {
+                if (visual.dataset.animationRun === String(run)) {
+                    node.classList.add("active");
+                }
+            }, index * 220);
+        });
+        window.setTimeout(() => {
+            if (visual.dataset.animationRun === String(run)) {
+                nodes.forEach(node => node.classList.remove("active"));
+            }
+        }, nodes.length * 220 + 500);
+    }
+
+    async function animateThreadLifecycle() {
+        const visual = document.getElementById("threadStates");
+        const button = visual && visual.parentElement.querySelector("button");
+        if (!visual || !button || button.disabled) return;
+        const states = visual.querySelectorAll(".state-node");
+        const run = Number(visual.dataset.animationRun || "0") + 1;
+        visual.dataset.animationRun = String(run);
+        button.disabled = true;
+        try {
+            for (const index of [0, 1, 3, 1, 5]) {
+                if (visual.dataset.animationRun !== String(run)) return;
+                states.forEach(state => state.classList.remove("active"));
+                states[index].classList.add("active");
+                await new Promise(resolve => window.setTimeout(resolve, 550));
+            }
+        } finally {
+            if (visual.dataset.animationRun === String(run)) {
+                states.forEach(state => state.classList.remove("active"));
+                button.disabled = false;
+            }
+        }
+    }
+
+    async function runJavaCode(panel) {
+        const editor = panel.querySelector(".code-editor");
+        const output = panel.querySelector(".execution-output");
+        const button = panel.querySelector("button");
+        if (!editor || !output || !editor.value.trim()) {
+            if (output) output.textContent = "Enter a Java program before running it.";
+            return;
+        }
+        if (window.location.protocol === "file:") {
+            output.textContent = "Open this page through http://127.0.0.1:8000/Unit5ClassModeling.html and start run_java_server.py first.";
+            return;
+        }
+
+        if (button) button.disabled = true;
+        output.textContent = "Compiling and running Java...";
+        try {
+            const response = await fetch("/api/execute", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: editor.value })
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                output.textContent = result.error || `Java runner returned HTTP ${response.status}.`;
+            } else if (typeof result.output === "string") {
+                output.textContent = result.output || (result.success ? "Program finished with no output." : "Java program failed.");
+            } else {
+                output.textContent = result.error || "The Java runner returned an unexpected response.";
+            }
+        } catch (error) {
+            output.textContent = `Could not reach the local Java runner: ${error.message}`;
+        } finally {
+            if (button) button.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>

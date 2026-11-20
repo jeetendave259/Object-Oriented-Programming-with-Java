@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Unit 1 Java study guide with runnable examples for Java basics, data types, operators, control flow, arrays, strings, command-line arguments, and wrapper classes.">
+  <title>ITMBU University — Unit 1: Basics of Java</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #fff;
+      --surface-2: #eef3f8;
+      --text: #1f2937;
+      --muted: #64748b;
+      --primary: #0f766e;
+      --primary-2: #14b8a6;
+      --accent: #f97316;
+      --border: #dbe3ea;
+      --code: #101827;
+      --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .progress {
+      position: fixed; inset: 0 auto auto 0; z-index: 1000;
+      width: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+    header {
+      padding: 64px 20px 58px; color: #fff;
+      background: radial-gradient(circle at top right, rgba(20,184,166,.35), transparent 35%), linear-gradient(135deg, #0f172a, #134e4a);
+    }
+    .hero { max-width: 1180px; margin: auto; }
+    .eyebrow { font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+    h1 { margin: 10px 0 14px; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.08; }
+    .hero p { max-width: 900px; margin: 0; color: #dbeafe; font-size: 1.08rem; }
+    .notice {
+      max-width: 1180px; margin: 22px auto 0; padding: 18px 20px;
+      border: 1px solid rgba(255,255,255,.2); border-radius: 14px;
+      color: #eefbf9; background: rgba(255,255,255,.08);
+    }
+    .pdf-action { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; color: #dbeafe; font-size: .9rem; text-align: center; }
+    .layout {
+      display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 28px;
+      max-width: 1280px; margin: 0 auto; padding: 30px 20px 70px;
+    }
+    aside {
+      position: sticky; top: 18px; align-self: start; max-height: calc(100vh - 36px);
+      overflow: auto; padding: 18px; border: 1px solid var(--border);
+      border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow);
+    }
+    aside h2 { margin: 0 0 12px; font-size: 1rem; }
+    aside a { display: block; padding: 7px 10px; border-radius: 8px; color: var(--text); font-size: .88rem; }
+    aside a:hover { background: var(--surface-2); text-decoration: none; }
+    main { min-width: 0; }
+    section.topic {
+      margin-bottom: 28px; padding: 30px; border: 1px solid var(--border);
+      border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow);
+    }
+    .topic-head { margin-bottom: 18px; }
+    .topic-number { color: var(--accent); font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    h2 { margin: 4px 0 8px; font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.2; }
+    h3 { margin-top: 26px; line-height: 1.3; }
+    p { margin: 10px 0 14px; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 7px 0; }
+    code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    pre {
+      margin: 16px 0; padding: 18px; overflow: auto; border-radius: 12px;
+      color: #e5edf7; background: var(--code); font-size: .86rem; line-height: 1.6; tab-size: 4;
+    }
+    .definition, .tip, .concept-card {
+      margin: 18px 0; padding: 15px 18px; border-radius: 10px;
+    }
+    .definition, .concept-card { border-left: 4px solid var(--primary); background: #f0fdfa; }
+    .tip { border: 1px solid var(--border); background: #f8fafc; }
+    table { width: 100%; margin: 18px 0; border-collapse: collapse; }
+    th, td { padding: 11px 12px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: #f1f5f9; }
+    .visual {
+      margin: 22px 0; padding: 20px; overflow: hidden;
+      border: 1px solid var(--border); border-radius: 14px; background: var(--surface-2);
+    }
+    .visual-title { margin-bottom: 14px; font-weight: 800; text-align: center; }
+    .flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
+    .flow-node {
+      min-width: 125px; padding: 12px 14px; border: 1px solid var(--border);
+      border-radius: 10px; background: #fff; font-weight: 700; text-align: center;
+      transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+    }
+    .flow-node.active { transform: translateY(-4px); border-color: var(--primary-2); box-shadow: 0 10px 18px rgba(20,184,166,.2); }
+    .flow-arrow { color: var(--primary); font-size: 1.4rem; font-weight: 900; }
+    .memory-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .memory-card { padding: 14px; border: 1px solid var(--border); border-radius: 11px; background: #fff; }
+    .memory-card strong { display: block; color: var(--primary); }
+    .type-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .type-card { padding: 15px; border: 1px solid var(--border); border-radius: 11px; background: #fff; transition: .25s ease; }
+    .type-card.active { transform: translateY(-5px); border-color: var(--primary-2); box-shadow: 0 10px 18px rgba(20,184,166,.18); }
+    .runner-panel { margin: 18px 0 24px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; }
+    .runner-title { margin-bottom: 8px; font-weight: 800; }
+    .code-editor {
+      display: block; width: 100%; min-height: 230px; resize: vertical; padding: 14px;
+      border: 1px solid var(--border); border-radius: 10px; color: var(--code); background: #fff;
+      font: .86rem/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace; tab-size: 4;
+    }
+    .print-code { display: none; }
+    .runner-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .execution-output {
+      min-height: 58px; max-height: 220px; overflow: auto; margin-top: 10px; padding: 12px;
+      border: 1px solid var(--border); border-radius: 10px; color: #e2e8f0; background: #0f172a;
+      font: .82rem/1.5 "SFMono-Regular", Consolas, "Liberation Mono", monospace; white-space: pre-wrap;
+    }
+    .runner-note { color: var(--muted); font-size: .88rem; }
+    button {
+      margin: 4px; padding: 9px 13px; border: 0; border-radius: 9px;
+      color: #fff; background: var(--primary); font-weight: 700; cursor: pointer;
+    }
+    button:hover { filter: brightness(1.08); }
+    button:disabled { opacity: .65; cursor: wait; }
+    .top { position: fixed; right: 20px; bottom: 20px; z-index: 999; width: 42px; height: 42px; padding: 0; border-radius: 50%; background: #0f172a; }
+    footer { padding: 30px 20px 50px; color: var(--muted); font-size: .9rem; text-align: center; }
+    @media (max-width: 1000px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: relative; top: auto; max-height: none; }
+    }
+    @media (max-width: 650px) {
+      section.topic { padding: 21px; }
+      .type-grid, .memory-grid { grid-template-columns: 1fr; }
+      table { font-size: .88rem; }
+      th, td { padding: 8px; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+    @page { size: A4; margin: 16mm 15mm 18mm; }
+    @media print {
+      html { scroll-behavior: auto; }
+      body { color: #111827; background: #fff; font-size: 10pt; line-height: 1.5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .progress, aside, .pdf-action, button, .top, .runner-actions, .execution-output { display: none !important; }
+      header { padding: 0 0 14pt; border-bottom: 2px solid var(--primary); color: #111827; background: #fff !important; }
+      .hero { max-width: none; }
+      .eyebrow { color: var(--primary); opacity: 1; }
+      h1 { color: #111827; font-size: 26pt; }
+      .hero p { color: #374151; font-size: 11pt; }
+      .notice { margin: 12pt 0 0; padding: 10pt; border: 1px solid #d1d5db; color: #1f2937; background: #f3f4f6; }
+      .layout { display: block; max-width: none; margin: 0; padding: 12pt 0 0; }
+      section.topic { margin: 0; padding: 14pt 0; border: 0; border-bottom: 1px solid #9ca3af; border-radius: 0; box-shadow: none; break-inside: auto; }
+      .topic-head, h2, h3 { break-after: avoid-page; }
+      h2 { font-size: 17pt; }
+      h3 { font-size: 12pt; }
+      p, ul, ol { orphans: 3; widows: 3; }
+      li, tr, .definition, .concept-card, .tip, .visual { break-inside: avoid-page; }
+      .visual, .definition, .concept-card, .tip { overflow: visible; box-shadow: none; }
+      .runner-panel { padding: 0; border: 0; background: #fff; }
+      .code-editor { display: none !important; }
+      .print-code {
+        display: block; margin: 8pt 0; padding: 9pt; overflow: visible;
+        border: 1px solid #cbd5e1; border-radius: 4px; color: #111827; background: #f3f4f6;
+        font: 8pt/1.35 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 4;
+        break-inside: auto; page-break-inside: auto;
+        print-color-adjust: exact;
+      }
+      pre { overflow: visible; padding: 9pt; border: 1px solid #cbd5e1; color: #111827; background: #f3f4f6; font-size: 8pt; line-height: 1.35; white-space: pre-wrap; overflow-wrap: anywhere; break-inside: auto; }
+      footer { padding: 14pt 0 0; border-top: 1px solid #9ca3af; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <a href="index.html" style="position:fixed;top:14px;left:14px;z-index:1100;padding:8px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;color:#fff;background:rgba(15,23,42,.72);font-size:.82rem;font-weight:700;text-decoration:none;backdrop-filter:blur(8px)">Dashboard</a>
+
+  <header>
+    <div class="hero">
+      <div class="eyebrow">ITMBU University • Computer Science &amp; Engineering</div>
+      <h1>Unit 1: Basics of Java</h1>
+      <p>A guided introduction to Java's history and runtime, the language's basic building blocks, and the arrays and text APIs used in everyday programs.</p>
+    </div>
+    <div class="notice"><strong>Unit overview:</strong> Learn by reading the explanations, following the visual models, and running the complete Java examples in each topic.</div>
+    <div class="pdf-action">
+      <button type="button" onclick="window.print()">Download as PDF</button>
+      <span>Choose <strong>Save as PDF</strong> in your browser's print dialog.</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h2>Unit Navigation</h2>
+      <a href="#history">1. Language History</a>
+      <a href="#platform">2. Platform and Runtime</a>
+      <a href="#program">3. Java Program Structure</a>
+      <a href="#types">4. Types and Variables</a>
+      <a href="#operators">5. Operators</a>
+      <a href="#control">6. Control Flow</a>
+      <a href="#arrays">7. Arrays</a>
+      <a href="#strings">8. Strings and Buffers</a>
+      <a href="#arguments">9. Arguments and Varargs</a>
+      <a href="#wrappers">10. Wrapper Classes</a>
+      <a href="#review">11. Review Checklist</a>
+    </aside>
+
+    <main>
+      <section class="topic" id="history">
+        <div class="topic-head"><div><div class="topic-number">Topic 1</div><h2>How Java Evolved</h2></div></div>
+        <div class="definition">Programming languages evolve as hardware, software, and the problems people need to solve change. Java brought familiar C-family syntax together with managed execution and a portable runtime.</div>
+        <div class="visual">
+          <div class="visual-title">A simplified language timeline</div>
+          <div class="flow" id="timelineFlow">
+            <div class="flow-node"><strong>Assembly</strong><br><small>hardware-specific instructions</small></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><strong>C</strong><br><small>structured systems programming</small></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><strong>C++</strong><br><small>object-oriented extensions</small></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><strong>Java</strong><br><small>managed, portable bytecode</small></div>
+          </div>
+          <div style="text-align:center;margin-top:12px"><button type="button" onclick="animateFlow('timelineFlow')">Trace the timeline</button></div>
+        </div>
+        <p>
+          C became influential for systems work because it offered structured code while
+          still allowing close control of resources. C++ added object-oriented features
+          and retained much of the C-family style. Java drew on that syntax and on
+          object-oriented ideas, but introduced a virtual machine so compiled programs
+          could target a common runtime instead of a specific processor instruction set.
+        </p>
+        <p>
+          The growth of the Internet increased the value of programs that could be
+          distributed and run on different kinds of computers. Java bytecode and the
+          Java Virtual Machine (JVM) address this by separating compilation from the
+          details of the host processor. Java has since been used for desktop, server,
+          web, embedded, and mobile software.
+        </p>
+        <p>
+          Java began in 1991 at Sun Microsystems as part of the Green Project, led by
+          James Gosling and colleagues. The team first targeted software for consumer
+          electronic and embedded devices; the language was initially called Oak.
+          The rapid expansion of the World Wide Web made portable, downloadable
+          programs especially compelling, and Oak was renamed Java before its public
+          release in 1995. Java's Internet success was a later opportunity, not the
+          original reason the project began.
+        </p>
+        <div class="tip"><strong>Language lineage:</strong> C and C++ influenced Java's familiar syntax, but Java is its own language—not a direct upgrade or replacement for C++.</div>
+        <h3>Procedural and Object-Oriented Ways to Organize Code</h3>
+        <table>
+          <thead><tr><th>Procedural approach</th><th>Object-oriented approach</th></tr></thead>
+          <tbody>
+            <tr><td>Organizes a program around procedures and the steps they perform.</td><td>Organizes related state and behavior into objects created from classes.</td></tr>
+            <tr><td>Data may be passed between functions and kept separately from them.</td><td>Objects own their state and provide methods that operate on that state.</td></tr>
+            <tr><td>Useful for expressing a direct sequence of transformations.</td><td>Useful when a system contains entities with identity, state, and responsibilities.</td></tr>
+          </tbody>
+        </table>
+        <p>Java is class-based and strongly supports object-oriented programming, while still including primitive values and static methods for other programming styles.</p>
+      </section>
+
+      <section class="topic" id="platform">
+        <div class="topic-head"><div><div class="topic-number">Topic 2</div><h2>Java Platform: JDK, Runtime, and JVM</h2></div></div>
+        <div class="definition">The Java compiler translates source code into bytecode. A Java Virtual Machine loads and executes that bytecode for the current operating system and processor.</div>
+        <div class="visual">
+          <div class="visual-title">From source file to running program</div>
+          <div class="flow" id="runtimeFlow">
+            <div class="flow-node"><code>Main.java</code><br><small>source code</small></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><code>javac</code><br><small>compiler</small></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node"><code>Main.class</code><br><small>bytecode</small></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node">JVM<br><small>load, verify, execute</small></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node">Program output</div>
+          </div>
+          <div style="text-align:center;margin-top:12px"><button type="button" onclick="animateFlow('runtimeFlow')">Animate the build and run steps</button></div>
+        </div>
+        <table>
+          <thead><tr><th>Component</th><th>Purpose</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td>JDK</td><td>Development kit: compiler, tools, libraries, and runtime components.</td><td><code>javac</code>, <code>java</code>, debugger, documentation tools</td></tr>
+            <tr><td>JRE concept</td><td>Libraries and runtime support needed to execute Java applications.</td><td>Runtime libraries and a compatible JVM</td></tr>
+            <tr><td>JVM</td><td>Loads classes, manages runtime memory, verifies bytecode, and executes it.</td><td>HotSpot JVM on one operating system; another JVM implementation on another platform</td></tr>
+          </tbody>
+        </table>
+        <p>
+          “Write once, run anywhere” means compatible bytecode can run on different
+          platforms when an appropriate JVM and libraries are available; it does not
+          mean every program is free of platform-specific behavior. In current Java
+          distributions the JDK normally includes everything needed to run Java code,
+          so a separate JRE download is not always provided.
+        </p>
+        <h3>A Simplified View of JVM Internals</h3>
+        <div class="memory-grid">
+          <div class="memory-card"><strong>Class loading and verification</strong>Finds class files, links types, and checks bytecode before execution.</div>
+          <div class="memory-card"><strong>Runtime memory</strong>The heap stores objects; each thread has a call stack and execution state.</div>
+          <div class="memory-card"><strong>Execution engine</strong>Interprets bytecode and may use just-in-time compilation for frequently used code.</div>
+        </div>
+        <ul>
+          <li><strong>Heap:</strong> shared runtime area where objects and arrays are allocated; garbage collection can reclaim unreachable objects.</li>
+          <li><strong>JVM stack:</strong> each thread has its own stack of method frames, including local variables and intermediate results.</li>
+          <li><strong>Program counter:</strong> each thread tracks the current bytecode instruction it is executing.</li>
+          <li><strong>Class metadata:</strong> the JVM keeps loaded class information in a runtime method area; implementations may organize this storage differently.</li>
+          <li><strong>Native support:</strong> native method stacks and the Java Native Interface (JNI) support calls between Java and platform-specific native libraries.</li>
+        </ul>
+        <p>
+          The JVM also coordinates garbage collection for eligible objects and can
+          communicate with native code through defined interfaces. Java manages memory
+          automatically, but programs still need to close external resources such as
+          files and network connections.
+        </p>
+        <h3>Common Java Platform Families</h3>
+        <ul>
+          <li><strong>Java SE:</strong> Core language, standard libraries, and general-purpose applications.</li>
+          <li><strong>Jakarta EE:</strong> Enterprise application specifications and APIs built on Java SE; older material may call this Java EE.</li>
+          <li><strong>Java ME:</strong> A platform family designed for constrained and embedded environments.</li>
+        </ul>
+        <h3>Features and Design Goals</h3>
+        <ul>
+          <li><strong>Portable:</strong> Bytecode targets a JVM rather than a single processor architecture.</li>
+          <li><strong>Object-oriented:</strong> Classes and objects support encapsulation, reuse, and polymorphism.</li>
+          <li><strong>Managed and robust:</strong> Type checking, exceptions, and automatic memory management help detect or contain common faults.</li>
+          <li><strong>Concurrent:</strong> The language and standard libraries provide thread and concurrency tools.</li>
+          <li><strong>Network-capable:</strong> Libraries support communication across processes and networks.</li>
+          <li><strong>Performance-aware:</strong> JVM implementations can optimize frequently executed code at runtime.</li>
+        </ul>
+        <div class="tip"><strong>Remember:</strong> Java is compiled and also executed by a runtime. Source code becomes bytecode; a JVM interprets or compiles that bytecode for its host platform.</div>
+      </section>
+
+      <section class="topic" id="program">
+        <div class="topic-head"><div><div class="topic-number">Topic 3</div><h2>Java Program Structure and Console Output</h2></div></div>
+        <p>A small command-line application typically declares a class and a <code>main</code> method. The launcher calls the entry point after loading the class.</p>
+        <pre><code>public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, Java!");
+    }
+}</code></pre>
+        <table>
+          <thead><tr><th>Part</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>public</code></td><td>Makes the class or method accessible to the launcher.</td></tr>
+            <tr><td><code>class Main</code></td><td>Declares a class; the local runner expects this name in <code>Main.java</code>.</td></tr>
+            <tr><td><code>static</code></td><td>Lets the launcher call <code>main</code> without creating a <code>Main</code> object first.</td></tr>
+            <tr><td><code>void</code></td><td>Declares that the method does not return a value.</td></tr>
+            <tr><td><code>String[] args</code></td><td>Receives command-line arguments as an array of strings.</td></tr>
+          </tbody>
+        </table>
+        <p><code>System.out</code> is the standard output stream. <code>println(...)</code> writes a value and then a line break; <code>print(...)</code> leaves the cursor on the same line. The dot operator accesses a member: <code>System</code> → <code>out</code> → <code>println</code>.</p>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable first program</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, Java!");
+        System.out.print("The answer is ");
+        System.out.println(6 * 7);
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button><span class="runner-note">Each editor is a complete program named Main.</span></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <h3>Comments, Identifiers, and Keywords</h3>
+        <ul>
+          <li><strong>Identifiers</strong> name classes, variables, and methods. They are case-sensitive, cannot contain spaces, and cannot be reserved keywords.</li>
+          <li>Names may begin with a letter, underscore, or dollar sign; conventional Java style uses <code>UpperCamelCase</code> for types and <code>lowerCamelCase</code> for methods and variables.</li>
+          <li><code>//</code> begins a line comment; <code>/* ... */</code> encloses a block comment; <code>/** ... */</code> is a documentation comment.</li>
+          <li>Keywords such as <code>class</code>, <code>if</code>, <code>return</code>, and <code>static</code> have language-defined meanings and cannot be used as identifiers.</li>
+        </ul>
+        <div class="concept-card"><strong>Access-modifier note:</strong> <code>public</code>, <code>protected</code>, and <code>private</code> control access; when no modifier is written, package access applies. Modifiers belong to declarations, not to the same category as keywords that define control flow.</div>
+      </section>
+
+      <section class="topic" id="types">
+        <div class="topic-head"><div><div class="topic-number">Topic 4</div><h2>Data Types, Variables, and Conversions</h2></div></div>
+        <div class="definition">A variable is a named storage location with a declared type. Java checks the type of a value when it is declared, assigned, passed, or returned.</div>
+        <div class="type-grid" id="typeCards">
+          <div class="type-card"><strong>Primitive</strong><br>Stores a value directly, such as an integer, decimal, character, or boolean.</div>
+          <div class="type-card"><strong>Reference</strong><br>Stores a reference to an object, array, or string. A reference may also be <code>null</code>.</div>
+        </div>
+        <div style="text-align:center"><button type="button" onclick="cycleTypes()">Compare the two type groups</button></div>
+        <h3>Java's Eight Primitive Types</h3>
+        <table>
+          <thead><tr><th>Type</th><th>Size</th><th>Range or values</th><th>Default for fields</th></tr></thead>
+          <tbody>
+            <tr><td><code>byte</code></td><td>8 bits</td><td>−128 to 127</td><td><code>0</code></td></tr>
+            <tr><td><code>short</code></td><td>16 bits</td><td>−32,768 to 32,767</td><td><code>0</code></td></tr>
+            <tr><td><code>int</code></td><td>32 bits</td><td>−2<sup>31</sup> to 2<sup>31</sup> − 1</td><td><code>0</code></td></tr>
+            <tr><td><code>long</code></td><td>64 bits</td><td>−2<sup>63</sup> to 2<sup>63</sup> − 1</td><td><code>0L</code></td></tr>
+            <tr><td><code>float</code></td><td>32 bits</td><td>Approximate IEEE 754 single precision</td><td><code>0.0f</code></td></tr>
+            <tr><td><code>double</code></td><td>64 bits</td><td>Approximate IEEE 754 double precision</td><td><code>0.0d</code></td></tr>
+            <tr><td><code>char</code></td><td>16 bits</td><td>One UTF-16 code unit; written in single quotes</td><td><code>'\u0000'</code></td></tr>
+            <tr><td><code>boolean</code></td><td>Not specified as a storage size</td><td><code>true</code> or <code>false</code></td><td><code>false</code></td></tr>
+          </tbody>
+        </table>
+        <p>The sizes above describe the language's primitive numeric and character types, not the space a variable necessarily occupies in every runtime layout. Fields and array elements receive the listed defaults; local variables must be assigned before they are read. Reference fields and array elements default to <code>null</code>.</p>
+        <h3>Declare and Initialize</h3>
+        <pre><code>int count;                 // declaration
+count = 3;                 // assignment
+double price = 12.50;      // declaration and initialization
+String label = "Java";     // reference type
+final int MAX_ATTEMPTS = 4; // cannot be reassigned</code></pre>
+        <h3>Identifier Rules</h3>
+        <ul>
+          <li>An identifier may use letters, digits, underscores, and dollar signs, but cannot begin with a digit or contain whitespace.</li>
+          <li>Identifiers are case-sensitive: <code>total</code> and <code>Total</code> are different names.</li>
+          <li>Reserved keywords cannot be used as identifiers. Choose descriptive names and follow Java naming conventions.</li>
+          <li>Local variables must be definitely assigned before use; <code>final</code> variables can be assigned only once.</li>
+        </ul>
+        <h3>Widening and Narrowing</h3>
+        <p>A widening conversion moves to a type that can represent the source type's full range in that conversion context, such as <code>int</code> to <code>long</code>. A narrowing conversion may lose information and generally requires an explicit cast.</p>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable types and casting example</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        int whole = 12;
+        double widened = whole;
+
+        double measurement = 9.8;
+        int narrowed = (int) measurement;
+
+        System.out.println("Widened: " + widened);
+        System.out.println("Narrowed: " + narrowed);
+        System.out.println("Character code: " + (int) 'A');
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <div class="tip"><strong>Conversion check:</strong> Integer arithmetic stays integral unless an operand is floating point. Casting <code>9.8</code> to <code>int</code> truncates the fractional part; it does not round to the nearest integer.</div>
+      </section>
+
+      <section class="topic" id="operators">
+        <div class="topic-head"><div><div class="topic-number">Topic 5</div><h2>Operators and Expressions</h2></div></div>
+        <p>Operators combine values into expressions. Parentheses make precedence explicit and help readers understand an expression's intended grouping.</p>
+        <table>
+          <thead><tr><th>Category</th><th>Operators</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>Arithmetic</td><td><code>+ - * / %</code></td><td>Calculations and remainder</td></tr>
+            <tr><td>Assignment</td><td><code>= += -= *= /= %=</code></td><td>Store or update a variable</td></tr>
+            <tr><td>Unary</td><td><code>++ -- + - ! ~</code></td><td>Increment, negate, or invert a value</td></tr>
+            <tr><td>Relational</td><td><code>== != &lt; &gt; &lt;= &gt;=</code></td><td>Compare values and produce a boolean</td></tr>
+            <tr><td>Logical</td><td><code>&amp;&amp; || !</code></td><td>Combine boolean conditions; <code>&amp;&amp;</code> and <code>||</code> short-circuit</td></tr>
+            <tr><td>Bitwise</td><td><code>&amp; | ^ ~ &lt;&lt; &gt;&gt; &gt;&gt;&gt;</code></td><td>Operate on individual bits of integral values</td></tr>
+            <tr><td>Conditional</td><td><code>condition ? a : b</code></td><td>Choose one of two expressions</td></tr>
+            <tr><td>Type test</td><td><code>instanceof</code></td><td>Test whether a reference is compatible with a type</td></tr>
+          </tbody>
+        </table>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable operator example</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        int value = 17;
+        System.out.println("Quotient: " + value / 5);
+        System.out.println("Remainder: " + value % 5);
+
+        int score = 82;
+        String result = score >= 50 ? "Pass" : "Try again";
+        System.out.println(result);
+
+        boolean validRange = value > 0 && value < 20;
+        System.out.println("In range: " + validRange);
+
+        Object text = "Java";
+        System.out.println("Is a String: " + (text instanceof String));
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <div class="concept-card"><strong>Common distinction:</strong> <code>=</code> assigns a value; <code>==</code> compares primitive values or tests whether two references identify the same object. Use <code>equals()</code> to compare the contents of many objects, including strings.</div>
+      </section>
+
+      <section class="topic" id="control">
+        <div class="topic-head"><div><div class="topic-number">Topic 6</div><h2>Control Statements</h2></div></div>
+        <div class="definition">Control flow determines which statements run, how often they run, and when execution leaves a block or method.</div>
+        <h3>Selection: <code>if</code> and <code>switch</code></h3>
+        <p>Use <code>if</code>, <code>else if</code>, and <code>else</code> for conditional branches or ranges. A <code>switch</code> selects among discrete alternatives. In a traditional switch statement, <code>break</code> prevents execution from falling through into the next case.</p>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable selection example</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        int score = 76;
+        char grade;
+        if (score >= 90) {
+            grade = 'A';
+        } else if (score >= 75) {
+            grade = 'B';
+        } else if (score >= 60) {
+            grade = 'C';
+        } else {
+            grade = 'D';
+        }
+        System.out.println("Grade: " + grade);
+
+        int day = 2;
+        switch (day) {
+            case 1:
+                System.out.println("Monday");
+                break;
+            case 2:
+                System.out.println("Tuesday");
+                break;
+            default:
+                System.out.println("Another day");
+        }
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <h3>Iteration: <code>while</code>, <code>do-while</code>, and <code>for</code></h3>
+        <ul>
+          <li><code>while</code> checks its condition before each iteration and may run zero times.</li>
+          <li><code>do-while</code> checks after its body and therefore runs at least once.</li>
+          <li><code>for</code> groups initialization, condition, and update in one loop header.</li>
+          <li>Enhanced <code>for</code> visits each element of an array or iterable when an index is not needed.</li>
+        </ul>
+        <div class="visual">
+          <div class="visual-title">A loop repeats while its condition remains true</div>
+          <div class="flow" id="loopFlow">
+            <div class="flow-node">Initialize</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node">Check condition</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node">Run body</div><div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node">Update and repeat</div>
+          </div>
+          <div style="text-align:center;margin-top:12px"><button type="button" onclick="animateFlow('loopFlow')">Animate loop steps</button></div>
+        </div>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable loops and jump statements</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        int count = 1;
+        while (count <= 3) {
+            System.out.println("while: " + count);
+            count++;
+        }
+
+        for (int number = 1; number <= 6; number++) {
+            if (number == 2) {
+                continue;
+            }
+            if (number == 5) {
+                break;
+            }
+            System.out.println("for: " + number);
+        }
+
+        int attempts = 0;
+        do {
+            attempts++;
+        } while (attempts < 1);
+        System.out.println("do-while runs: " + attempts);
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <p><code>break</code> exits the nearest loop or switch. <code>continue</code> skips to the next loop iteration. <code>return</code> leaves a method and may provide its result.</p>
+      </section>
+
+      <section class="topic" id="arrays">
+        <div class="topic-head"><div><div class="topic-number">Topic 7</div><h2>Arrays</h2></div></div>
+        <div class="definition">An array stores a fixed-length sequence of values of one declared component type. Its index begins at zero, and its length is available from the array's <code>length</code> field.</div>
+        <pre><code>int[] marks;                 // declare a reference
+marks = new int[3];          // create a three-element array
+marks[0] = 90;               // first element
+int[] values = {4, 8, 12};   // declare, create, and initialize</code></pre>
+        <p>New numeric arrays start with zero values, <code>char</code> arrays with the null character, boolean arrays with <code>false</code>, and reference arrays with <code>null</code>. Accessing an index outside <code>0</code> through <code>length - 1</code> causes an <code>ArrayIndexOutOfBoundsException</code>.</p>
+        <div class="visual">
+          <div class="visual-title">Array indices address individual slots</div>
+          <div class="flow" id="arrayFlow">
+            <div class="flow-node"><small>index 0</small><br><strong>4</strong></div>
+            <div class="flow-node"><small>index 1</small><br><strong>8</strong></div>
+            <div class="flow-node"><small>index 2</small><br><strong>12</strong></div>
+            <div class="flow-node"><small>length</small><br><strong>3</strong></div>
+          </div>
+          <div style="text-align:center;margin-top:12px"><button type="button" onclick="animateFlow('arrayFlow')">Highlight array slots</button></div>
+        </div>
+        <h3>Traverse an Array and a Two-Dimensional Array</h3>
+        <p>A multidimensional Java array is an array whose elements are themselves arrays. Rows may have different lengths; this is called a jagged array.</p>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable arrays, nested loops, and for-each</div>
+          <textarea class="code-editor" spellcheck="false">import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        int[] values = {4, 8, 12};
+        for (int index = 0; index < values.length; index++) {
+            System.out.println(index + ": " + values[index]);
+        }
+
+        int[][] rows = {
+            {1, 2, 3},
+            {4, 5},
+            {6}
+        };
+        for (int[] row : rows) {
+            System.out.println(Arrays.toString(row));
+        }
+        System.out.println("Second row length: " + rows[1].length);
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <div class="tip"><strong>Use an indexed loop</strong> when you need the position or want to update array elements. Use an enhanced <code>for</code> loop for straightforward read-only traversal. Arrays are efficient fixed-size containers, but they do not automatically grow or shrink.</div>
+      </section>
+
+      <section class="topic" id="strings">
+        <div class="topic-head"><div><div class="topic-number">Topic 8</div><h2>String and Mutable Text</h2></div></div>
+        <div class="definition">A <code>String</code> represents text and is immutable: an operation that appears to change it returns a new string rather than altering the original object.</div>
+        <h3>Useful String Operations</h3>
+        <table>
+          <thead><tr><th>Method</th><th>Result or behavior</th></tr></thead>
+          <tbody>
+            <tr><td><code>length()</code></td><td>Number of UTF-16 code units in the string</td></tr>
+            <tr><td><code>toUpperCase()</code> / <code>toLowerCase()</code></td><td>New string with case converted using a locale-sensitive rule</td></tr>
+            <tr><td><code>substring(begin)</code></td><td>Text from the starting index through the end</td></tr>
+            <tr><td><code>substring(begin, end)</code></td><td>Text from <code>begin</code>, inclusive, to <code>end</code>, exclusive</td></tr>
+            <tr><td><code>concat(other)</code></td><td>Text joined with another string; <code>+</code> is also commonly used</td></tr>
+            <tr><td><code>equals(other)</code></td><td>Case-sensitive content comparison</td></tr>
+            <tr><td><code>equalsIgnoreCase(other)</code></td><td>Case-insensitive comparison for many ordinary text cases</td></tr>
+          </tbody>
+        </table>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable string operations</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        String language = "Java";
+        System.out.println("Length: " + language.length());
+        System.out.println("Uppercase: " + language.toUpperCase());
+        System.out.println("Substring: " + language.substring(1, 3));
+        System.out.println("Concatenated: " + language.concat(" basics"));
+        System.out.println("Same text: " + language.equals("Java"));
+        System.out.println("Ignore case: " + language.equalsIgnoreCase("JAVA"));
+        System.out.println("Original remains: " + language);
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <h3><code>StringBuilder</code> and <code>StringBuffer</code></h3>
+        <p>Repeated concatenation in a loop can create many temporary strings. A mutable text builder supports operations such as <code>append</code>, <code>insert</code>, <code>replace</code>, <code>delete</code>, and <code>reverse</code>. <code>StringBuilder</code> is generally preferred for single-threaded work; <code>StringBuffer</code> provides synchronized methods for legacy thread-safe use.</p>
+        <p>Both expose <code>length()</code> and <code>capacity()</code>. Capacity is the space available before a resize is required; it is not the number of characters currently present.</p>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable mutable text example</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        StringBuilder text = new StringBuilder("Java");
+        System.out.println("Initial length: " + text.length());
+        System.out.println("Initial capacity: " + text.capacity());
+
+        text.append(" basics");
+        text.insert(5, "language ");
+        text.replace(5, 14, "core");
+        System.out.println("Edited: " + text);
+
+        text.delete(5, 10);
+        System.out.println("After delete: " + text);
+        System.out.println("Reversed: " + new StringBuilder(text).reverse());
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <div class="concept-card"><strong>Unicode note:</strong> <code>String.length()</code> counts UTF-16 code units, not necessarily user-perceived characters. A supplementary Unicode symbol can occupy two code units.</div>
+      </section>
+
+      <section class="topic" id="arguments">
+        <div class="topic-head"><div><div class="topic-number">Topic 9</div><h2>Command-Line Arguments and Varargs</h2></div></div>
+        <p>The launcher's command-line values arrive as strings in <code>main(String[] args)</code>. Parse each value into the desired type and handle invalid input deliberately. The page runner starts <code>Main</code> without arguments, so this example also demonstrates a built-in sample array.</p>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable command-line and varargs example</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    static int sum(int... numbers) {
+        int total = 0;
+        for (int number : numbers) {
+            total += number;
+        }
+        return total;
+    }
+
+    public static void main(String[] args) {
+        String[] inputs = args.length == 0
+                ? new String[] {"12", "30"}
+                : args;
+
+        int total = 0;
+        for (String input : inputs) {
+            try {
+                total += Integer.parseInt(input);
+            } catch (NumberFormatException error) {
+                System.out.println("Not an integer: " + input);
+            }
+        }
+
+        System.out.println("Argument total: " + total);
+        System.out.println("Varargs total: " + sum(2, 3, 4));
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button><span class="runner-note">The local runner does not supply CLI arguments; edit the sample values to experiment.</span></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <p>A varargs parameter such as <code>int... numbers</code> lets callers provide zero or more values; inside the method it behaves like an array. A method may declare only one varargs parameter, and it must be the final parameter.</p>
+        <pre><code>static void report(String label, int... values) {
+    System.out.println(label + ": " + values.length);
+}</code></pre>
+      </section>
+
+      <section class="topic" id="wrappers">
+        <div class="topic-head"><div><div class="topic-number">Topic 10</div><h2>Wrapper Classes</h2></div></div>
+        <p>Each primitive type has a corresponding object type. Wrapper objects are useful when an API or collection needs objects, and they provide parsing and conversion methods.</p>
+        <table>
+          <thead><tr><th>Primitive</th><th>Wrapper class</th><th>Parsing example</th></tr></thead>
+          <tbody>
+            <tr><td><code>byte</code></td><td><code>Byte</code></td><td><code>Byte.parseByte(text)</code></td></tr>
+            <tr><td><code>short</code></td><td><code>Short</code></td><td><code>Short.parseShort(text)</code></td></tr>
+            <tr><td><code>int</code></td><td><code>Integer</code></td><td><code>Integer.parseInt(text)</code></td></tr>
+            <tr><td><code>long</code></td><td><code>Long</code></td><td><code>Long.parseLong(text)</code></td></tr>
+            <tr><td><code>float</code></td><td><code>Float</code></td><td><code>Float.parseFloat(text)</code></td></tr>
+            <tr><td><code>double</code></td><td><code>Double</code></td><td><code>Double.parseDouble(text)</code></td></tr>
+            <tr><td><code>char</code></td><td><code>Character</code></td><td>Use character-specific methods; there is no general <code>parseChar</code>.</td></tr>
+            <tr><td><code>boolean</code></td><td><code>Boolean</code></td><td><code>Boolean.parseBoolean(text)</code></td></tr>
+          </tbody>
+        </table>
+        <p><strong>Autoboxing</strong> automatically converts a primitive to its wrapper when required; <strong>unboxing</strong> converts a wrapper back to a primitive. Unboxing a <code>null</code> wrapper throws <code>NullPointerException</code>. Use <code>valueOf</code> for wrapper conversion; wrapper constructors are deprecated in modern Java.</p>
+        <div class="runner-panel">
+          <div class="runner-title">Runnable parsing, boxing, and unboxing example</div>
+          <textarea class="code-editor" spellcheck="false">public class Main {
+    public static void main(String[] args) {
+        String text = "256";
+        int primitive = Integer.parseInt(text);
+        Integer boxed = Integer.valueOf(primitive);
+        int unboxed = boxed;
+
+        double decimal = Double.parseDouble("3.75");
+        boolean enabled = Boolean.parseBoolean("true");
+
+        System.out.println("Primitive: " + primitive);
+        System.out.println("Wrapper: " + boxed);
+        System.out.println("Unboxed: " + unboxed);
+        System.out.println("Double: " + decimal);
+        System.out.println("Boolean: " + enabled);
+    }
+}</textarea>
+          <div class="runner-actions"><button type="button" onclick="runJavaCode(this.closest('.runner-panel'))">Run Java</button></div>
+          <div class="execution-output" aria-live="polite">Output will appear here.</div>
+        </div>
+        <div class="tip"><strong>Parsing is validation:</strong> <code>Integer.parseInt</code> throws <code>NumberFormatException</code> when the input is not a valid integer. <code>Boolean.parseBoolean</code> returns <code>true</code> only for text equal to “true” ignoring case; other text becomes <code>false</code>.</div>
+      </section>
+
+      <section class="topic" id="review">
+        <div class="topic-head"><div><div class="topic-number">Unit Summary</div><h2>Basics of Java Checklist</h2></div></div>
+        <ol>
+          <li>Describe why Java uses bytecode and how the JDK, runtime libraries, and JVM relate.</li>
+          <li>Identify the class and <code>main</code> method in a command-line Java program.</li>
+          <li>Choose an appropriate primitive or reference type and recognize when a cast can lose information.</li>
+          <li>Use arithmetic, comparison, logical, assignment, and conditional operators correctly.</li>
+          <li>Choose a selection or loop statement and explain <code>break</code>, <code>continue</code>, and <code>return</code>.</li>
+          <li>Declare, initialize, traverse, and bounds-check one- and multidimensional arrays.</li>
+          <li>Use immutable string comparisons and select a mutable text builder for repeated edits.</li>
+          <li>Parse command-line text and explain varargs, wrapper types, boxing, and unboxing.</li>
+        </ol>
+        <div class="tip"><strong>Practice:</strong> Create a program that accepts numeric marks, stores them in an array, calculates a total and average, assigns a grade, and prints a formatted summary using strings and wrapper parsing.</div>
+      </section>
+    </main>
+  </div>
+
+  <footer>ITMBU University • Computer Science &amp; Engineering • Unit 1 Study Guide</footer>
+  <button class="top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" aria-label="Back to top">↑</button>
+  <script>
+    const progress = document.getElementById("progress");
+
+    window.addEventListener("scroll", function () {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      progress.style.width = percent + "%";
+    });
+
+    function animateFlow(id) {
+      const flow = document.getElementById(id);
+      if (!flow) return;
+      const nodes = flow.querySelectorAll(".flow-node");
+      const run = Number(flow.dataset.animationRun || "0") + 1;
+      flow.dataset.animationRun = String(run);
+      nodes.forEach(node => node.classList.remove("active"));
+      nodes.forEach((node, index) => {
+        window.setTimeout(() => {
+          if (flow.dataset.animationRun === String(run)) node.classList.add("active");
+        }, index * 220);
+      });
+      window.setTimeout(() => {
+        if (flow.dataset.animationRun === String(run)) nodes.forEach(node => node.classList.remove("active"));
+      }, nodes.length * 220 + 450);
+    }
+
+    function cycleTypes() {
+      const cards = document.querySelectorAll("#typeCards .type-card");
+      cards.forEach(card => card.classList.remove("active"));
+      cards.forEach((card, index) => {
+        window.setTimeout(() => {
+          card.classList.add("active");
+          window.setTimeout(() => card.classList.remove("active"), 600);
+        }, index * 650);
+      });
+    }
+
+    function prepareCodeForPrint() {
+      document.querySelectorAll(".print-code").forEach(block => block.remove());
+      document.querySelectorAll(".runner-panel .code-editor").forEach(editor => {
+        const printBlock = document.createElement("div");
+        printBlock.className = "print-code";
+        printBlock.textContent = editor.value;
+        editor.insertAdjacentElement("afterend", printBlock);
+      });
+    }
+
+    function clearPrintedCode() {
+      document.querySelectorAll(".print-code").forEach(block => block.remove());
+    }
+
+    window.addEventListener("beforeprint", prepareCodeForPrint);
+    window.addEventListener("afterprint", clearPrintedCode);
+
+    async function runJavaCode(panel) {
+      const editor = panel && panel.querySelector(".code-editor");
+      const output = panel && panel.querySelector(".execution-output");
+      const button = panel && panel.querySelector("button");
+      if (!editor || !output) return;
+      if (!editor.value.trim()) {
+        output.textContent = "Enter a Java program before running it.";
+        return;
+      }
+      if (window.location.protocol === "file:") {
+        output.textContent = "Open this page from http://127.0.0.1:8000/Unit1_BasicsOfJava.html and start run_java_server.py.";
+        return;
+      }
+
+      if (button) button.disabled = true;
+      output.textContent = "Compiling and running Java...";
+      try {
+        const response = await fetch("/api/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: editor.value })
+        });
+        let result;
+        try {
+          result = await response.json();
+        } catch {
+          throw new Error(`The runner returned an invalid response (HTTP ${response.status}).`);
+        }
+        if (!response.ok) {
+          output.textContent = result.error || `Java runner returned HTTP ${response.status}.`;
+        } else if (typeof result.output === "string") {
+          output.textContent = result.output || (result.success ? "Program finished with no output." : "Java program failed.");
+        } else {
+          output.textContent = result.error || "The Java runner returned an unexpected response.";
+        }
+      } catch (error) {
+        output.textContent = `Could not reach the local Java runner: ${error.message}`;
+      } finally {
+        if (button) button.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

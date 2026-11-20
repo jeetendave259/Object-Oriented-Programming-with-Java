@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITMBU University — Unit 4: JavaFX UI and Event-Driven Programming</title>
+    <style>
+        :root {
+            --primary-color: #2b5797;
+            --secondary-color: #eff4ff;
+            --accent-color: #e3f2fd;
+            --text-color: #333;
+            --border-color: #bbdefb;
+            --abstention-bg: #fff3cd;
+            --abstention-border: #ffeeba;
+            --abstention-text: #856404;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 30px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            color: #1976d2;
+            margin-top: 20px;
+        }
+
+        .citation {
+            font-size: 0.85em;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .abstention-box {
+            background-color: var(--abstention-bg);
+            border: 1px solid var(--abstention-border);
+            color: var(--abstention-text);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .code-container {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            margin-bottom: 10px;
+        }
+
+        /* Animation: Scene Graph Hierarchy */
+        .scene-graph-anim {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--secondary-color);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin: 20px 0;
+        }
+
+        .sg-node {
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .sg-node.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .sg-children {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .sg-arrow {
+            width: 2px;
+            height: 20px;
+            background: var(--primary-color);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        .sg-arrow.visible { opacity: 1; }
+
+        .btn-animate {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .btn-animate:hover { background-color: #1565c0; }
+
+        /* Animation: Event Phases */
+        .event-phase-anim {
+            position: relative;
+            height: 250px;
+            background: #f1f8e9;
+            border: 1px solid #c5e1a5;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .ep-node {
+            width: 60%;
+            text-align: center;
+            padding: 10px;
+            background: #fff;
+            border: 2px solid #558b2f;
+            border-radius: 4px;
+            z-index: 2;
+        }
+        .ep-ball {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #e65100;
+            border-radius: 50%;
+            left: 20%;
+            top: 30px;
+            opacity: 0;
+            transition: all 1s ease-in-out;
+            z-index: 3;
+        }
+        .ep-label {
+            position: absolute;
+            right: 10%;
+            top: 40%;
+            font-weight: bold;
+            color: #e65100;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        :root {
+            --primary: #0f766e;
+            --primary-2: #14b8a6;
+            --accent: #f97316;
+            --surface: #fff;
+            --surface-2: #eef3f8;
+            --text: #1f2937;
+            --muted: #64748b;
+            --border: #dbe3ea;
+            --code: #101827;
+            --shadow: 0 10px 30px rgba(15,23,42,.08);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            padding: 0;
+            color: var(--text);
+            background: #f5f7fb;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.7;
+        }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            width: 0;
+            z-index: 1000;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        header {
+            padding: 64px 20px 58px;
+            color: white;
+            background:
+                radial-gradient(circle at top right, rgba(20,184,166,.35), transparent 35%),
+                linear-gradient(135deg, #0f172a, #134e4a);
+        }
+        .hero { max-width: 1180px; margin: auto; }
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: .14em;
+            font-size: .78rem;
+            font-weight: 800;
+            opacity: .8;
+        }
+        header h1 {
+            margin: 10px 0 14px;
+            padding: 0;
+            border: 0;
+            color: white;
+            text-align: left;
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            line-height: 1.05;
+        }
+        .hero p {
+            max-width: 860px;
+            margin: 0;
+            color: #dbeafe;
+            font-size: 1.08rem;
+        }
+        .notice {
+            max-width: 1180px;
+            margin: 24px auto 0;
+            padding: 18px 20px;
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 14px;
+            color: #eefbf9;
+            background: rgba(255,255,255,.08);
+            font-size: .94rem;
+        }
+        .pdf-action {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+            color: #dbeafe;
+            font-size: .9rem;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 270px minmax(0, 1fr);
+            gap: 28px;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 30px 20px 70px;
+        }
+        aside {
+            position: sticky;
+            top: 18px;
+            height: max-content;
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+        aside h2 { margin: 0 0 12px; font-size: 1rem; }
+        aside a {
+            display: block;
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: .9rem;
+        }
+        aside a:hover { background: var(--surface-2); text-decoration: none; }
+        main { min-width: 0; }
+        section.topic {
+            margin-bottom: 28px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+        .topic-head { margin-bottom: 18px; }
+        .topic-number {
+            color: var(--accent);
+            font-size: .8rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        section.topic h2 {
+            margin: 4px 0 8px;
+            padding: 0;
+            border: 0;
+            color: var(--text);
+            text-align: left;
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            line-height: 1.2;
+        }
+        section.topic h3 { margin-top: 26px; color: var(--text); line-height: 1.3; }
+        p { margin: 10px 0 14px; }
+        ul, ol { padding-left: 22px; }
+        li { margin: 7px 0; }
+        .citation {
+            display: inline-block;
+            margin-left: 5px;
+            padding: 2px 8px;
+            border: 1px solid #bbf7d0;
+            border-radius: 999px;
+            color: #065f46;
+            background: #ecfdf5;
+            font-size: .78rem;
+            font-style: normal;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .abstention-box {
+            max-width: 1180px;
+            margin: 24px auto 0;
+            padding: 14px 18px;
+            border: 0;
+            border-left: 4px solid var(--accent);
+            border-radius: 10px;
+            color: #7c2d12;
+            background: #fff7ed;
+            font-weight: 400;
+        }
+        table { margin: 18px 0; }
+        th, td { border-color: var(--border); vertical-align: top; }
+        th { color: var(--text); background: #f1f5f9; }
+        .code-container {
+            margin: 18px 0;
+            padding: 0;
+            border-radius: 12px;
+            background: transparent;
+            color: inherit;
+            font-family: inherit;
+        }
+        pre {
+            margin: 0;
+            padding: 20px;
+            border: 0;
+            border-radius: 12px;
+            color: #e5edf7;
+            background: var(--code);
+            font-size: .88rem;
+            line-height: 1.65;
+            tab-size: 4;
+        }
+        code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+        .javafx-runner {
+            margin: 18px 0 24px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+        .javafx-runner-title { margin-bottom: 8px; font-weight: 800; }
+        .javafx-editor {
+            display: block;
+            width: 100%;
+            min-height: 280px;
+            resize: vertical;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--code);
+            background: #fff;
+            font: .86rem/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+            tab-size: 4;
+        }
+        .javafx-runner-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .javafx-output {
+            min-height: 50px;
+            margin: 10px 0 0;
+            padding: 12px;
+            overflow: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #e2e8f0;
+            background: #0f172a;
+            font: .82rem/1.5 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+            white-space: pre-wrap;
+        }
+        .javafx-runner-note { color: var(--muted); font-size: .88rem; }
+        .javafx-runner button:disabled { opacity: .65; cursor: wait; }
+        button, .btn-animate {
+            margin: 4px;
+            padding: 9px 13px;
+            border: 0;
+            border-radius: 9px;
+            color: white;
+            background: var(--primary);
+            font-size: .95rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        button:hover, .btn-animate:hover { filter: brightness(1.08); }
+        .scene-graph-anim, .event-phase-anim {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--surface-2);
+        }
+        .sg-node { background: var(--primary); }
+        .sg-arrow { background: var(--primary-2); }
+        .top {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 999;
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            border-radius: 50%;
+            background: #0f172a;
+        }
+        footer {
+            padding: 30px 20px 50px;
+            color: var(--muted);
+            font-size: .9rem;
+            text-align: center;
+        }
+        .print-only { display: none; }
+        @media (max-width: 1000px) {
+            .layout { grid-template-columns: 1fr; }
+            aside { position: relative; top: auto; }
+        }
+        @media (max-width: 650px) {
+            section.topic { padding: 21px; }
+            .sg-children { flex-wrap: wrap; gap: 8px; }
+            .ep-node { width: 75%; }
+            table { font-size: .88rem; }
+            th, td { padding: 8px; }
+        }
+        @page { size: A4; margin: 16mm 15mm 18mm; }
+        @media print {
+            html { scroll-behavior: auto; }
+            body {
+                padding: 0;
+                color: #111827;
+                background: #fff;
+                font-size: 10pt;
+                line-height: 1.5;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .progress, aside, .pdf-action, button, .top { display: none !important; }
+            .javafx-editor { min-height: 0; height: auto; resize: none; }
+            .javafx-runner { break-inside: avoid-page; }
+            header {
+                padding: 0 0 14pt;
+                border-bottom: 2px solid var(--primary);
+                color: #111827;
+                background: #fff !important;
+            }
+            .hero { max-width: none; }
+            .eyebrow { color: var(--primary); opacity: 1; }
+            header h1 { color: #111827; font-size: 26pt; }
+            .hero p { color: #374151; font-size: 11pt; }
+            .notice {
+                margin: 12pt 0 0;
+                padding: 10pt;
+                border: 1px solid #d1d5db;
+                color: #1f2937;
+                background: #f3f4f6;
+            }
+            .abstention-box { margin: 12pt 0 0; }
+            .layout { display: block; max-width: none; margin: 0; padding: 12pt 0 0; }
+            section.topic {
+                margin: 0;
+                padding: 14pt 0;
+                border: 0;
+                border-bottom: 1px solid #9ca3af;
+                border-radius: 0;
+                box-shadow: none;
+                break-inside: auto;
+            }
+            .topic-head, h2, h3 { break-after: avoid-page; }
+            section.topic h2 { font-size: 17pt; }
+            section.topic h3 { font-size: 12pt; }
+            p, ul, ol { orphans: 3; widows: 3; }
+            li, tr, .scene-graph-anim, .event-phase-anim, pre { break-inside: avoid-page; }
+            pre {
+                overflow: visible;
+                padding: 10pt;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                color: #111827;
+                background: #f3f4f6;
+                font-size: 8pt;
+                line-height: 1.4;
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
+            }
+            .sg-node, .sg-arrow { opacity: 1; transform: none; }
+            .ep-ball, .ep-label { display: none; }
+            .print-only { display: block; }
+            .citation { color: #374151; background: #f3f4f6; border-color: #d1d5db; }
+            a { color: #111827; text-decoration: none; }
+            footer { padding: 14pt 0 0; border-top: 1px solid #9ca3af; }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" style="position:fixed;top:14px;left:14px;z-index:1100;padding:8px 12px;border:1px solid rgba(15,23,42,.2);border-radius:999px;color:#fff;background:rgba(15,23,42,.82);font-size:.82rem;font-weight:700;text-decoration:none;backdrop-filter:blur(8px)">Dashboard</a>
+
+<div class="progress" id="progress"></div>
+
+<header>
+    <div class="hero">
+        <div class="eyebrow">ITMBU University • Computer Science &amp; Engineering</div>
+        <h1>Unit 4: JavaFX UI and Event-Driven Programming</h1>
+        <p>Interactive academic study guide covering the JavaFX API, application structure, shapes, layouts, event handling, and animation.</p>
+        <div class="notice abstention-box">
+            <strong>Source boundary:</strong> The supplied slides list several topics as brief headers or empty diagrams without explanations: <em>Looping, What is JavaFX?, Features of JavaFX, JDK API and Toolkit, Win32 | GWT, OpenGL | D3D, Web Kit, G Streams, Prism, Glass, Installing JavaFX, Lifecycle of JavaFX Application</em> [Slides 2–4, 8, 11–16, 20, 40]. Further explanation requires additional slide context.
+        </div>
+        <div class="pdf-action">
+            <button type="button" onclick="window.print()">Download as PDF</button>
+            <span>In the print dialog, choose <strong>Save as PDF</strong> as the destination.</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside>
+        <h2>Unit Navigation</h2>
+        <a href="#architecture">1. JavaFX API Architecture</a>
+        <a href="#application">2. Application Structure</a>
+        <a href="#shapes">3. 2D Shapes</a>
+        <a href="#layouts">4. Layout Panes</a>
+        <a href="#events">5. Event Handling</a>
+        <a href="#animation">6. Animation</a>
+    </aside>
+
+    <main>
+    <!-- SECTION 1: Architecture -->
+    <section class="topic" id="architecture">
+        <div class="topic-head"><div><div class="topic-number">Topic 1</div><h2>Architecture of JavaFX API</h2></div></div>
+        <p>The JavaFX API consists of several core structural components <span class="citation">[Slide 19: Architecture of JavaFX API (Cont.)]</span>:</p>
+        <ul>
+            <li><strong>Quantum Toolkit:</strong> It is an abstraction over the low-level components of Prism, Glass, Media Engine, and Web Engine. It ties Prism and GWT together and makes them available to JavaFX <span class="citation">[Slide 19: Architecture of JavaFX API (Cont.)]</span>.</li>
+            <li><strong>WebView:</strong> This component is used to process HTML content. It uses a technology called Web Kit, which is an internal open-source web browser engine. It supports web technologies like HTML5, CSS, JavaScript, DOM, and SVG <span class="citation">[Slide 19: Architecture of JavaFX API (Cont.)]</span>.</li>
+            <li><strong>Media Engine:</strong> Based on an open-source engine known as a Streamer, this engine supports the playback of video and audio content <span class="citation">[Slide 19: Architecture of JavaFX API (Cont.)]</span>.</li>
+        </ul>
+    </section>
+
+    <!-- SECTION 2: Application Structure -->
+    <section class="topic" id="application">
+        <div class="topic-head"><div><div class="topic-number">Topic 2</div><h2>JavaFX Application Structure</h2></div></div>
+        <p>A JavaFX application relies on a hierarchical structure consisting of a Stage, a Scene, and a Scene Graph <span class="citation">[Slide 21: JavaFX Application Structure]</span>.</p>
+
+        <h3>2.1 Stage</h3>
+        <ul>
+            <li>A stage (a window) contains all the objects of a JavaFX application <span class="citation">[Slide 26: Stage]</span>.</li>
+            <li>It is represented by the <code>Stage</code> class of the package <code>javafx.stage</code> <span class="citation">[Slide 26: Stage]</span>.</li>
+            <li>The primary stage is created by the platform itself and passed as an argument to the <code>start()</code> method of the <code>Application</code> class <span class="citation">[Slide 26: Stage]</span>.</li>
+            <li>A stage has two parameters determining its position: Width and Height <span class="citation">[Slide 26: Stage]</span>.</li>
+            <li>There are five types of stages available: Decorated, Undecorated, Transparent, Unified, and Utility <span class="citation">[Slide 26: Stage]</span>.</li>
+        </ul>
+
+        <h3>2.2 Scene</h3>
+        <ul>
+            <li>A scene represents the physical contents of a JavaFX application and contains all the contents of a scene graph <span class="citation">[Slide 27: Scene]</span>.</li>
+            <li>Represented by the <code>Scene</code> class of the package <code>javafx.scene</code> <span class="citation">[Slide 27: Scene]</span>.</li>
+            <li>At any instance, the scene object is added to only one stage <span class="citation">[Slide 27: Scene]</span>.</li>
+            <li>You can opt for the size of the scene by passing its dimensions (height and width) along with the root node to its constructor <span class="citation">[Slide 27: Scene]</span>.</li>
+        </ul>
+
+        <h3>2.3 Steps to Create a JavaFX Application</h3>
+        <p>Follow these steps to create an application <span class="citation">[Slide 30: Steps to create JavaFX application]</span>:</p>
+        <ol>
+            <li>Extend the <code>Application</code> class of the <code>javafx.application</code> package <span class="citation">[Slide 30: Steps to create JavaFX application]</span>.</li>
+            <li>Override the <code>start</code> method of the Application class <span class="citation">[Slide 30: Steps to create JavaFX application]</span>.</li>
+            <li>Prepare a scene graph with the required nodes <span class="citation">[Slide 30: Steps to create JavaFX application]</span>.</li>
+            <li>Prepare a Scene with the required dimensions and add the scene graph (root node) to it <span class="citation">[Slide 30: Steps to create JavaFX application]</span>.</li>
+            <li>Prepare a stage, add the scene to the stage, and display the contents of the stage <span class="citation">[Slide 30: Steps to create JavaFX application]</span>.</li>
+        </ol>
+        <p><em>Stage Operations:</em> Set the title using <code>setTitle()</code>, attach the scene using <code>setScene()</code>, and display the contents using <code>show()</code> <span class="citation">[Slide 34: 5. Preparing the Stage]</span>.</p>
+
+        <!-- Animation: Scene Graph -->
+        <div class="scene-graph-anim">
+            <button class="btn-animate" onclick="animateSceneGraph()">Build Scene Graph Hierarchy</button>
+            <div id="sg-stage" class="sg-node">Stage (Window)</div>
+            <div id="sg-arr1" class="sg-arrow"></div>
+            <div id="sg-scene" class="sg-node">Scene (Physical Contents)</div>
+            <div id="sg-arr2" class="sg-arrow"></div>
+            <div id="sg-root" class="sg-node">Root Node</div>
+            <div id="sg-arr3" class="sg-arrow" style="height: 10px;"></div>
+            <div class="sg-children">
+                <div id="sg-branch" class="sg-node" style="background:#558b2f;">Branch Node</div>
+                <div id="sg-leaf" class="sg-node" style="background:#e65100;">Leaf Node</div>
+            </div>
+            <p class="citation" style="margin-top:15px; color:#555;">[Slide 25: Root Node / Branch Node / Leaf Node / Stage]</p>
+        </div>
+
+        <script>
+            function animateSceneGraph() {
+                const elements = ['sg-stage', 'sg-arr1', 'sg-scene', 'sg-arr2', 'sg-root', 'sg-arr3', 'sg-branch', 'sg-leaf'];
+                elements.forEach((id, index) => {
+                    const el = document.getElementById(id);
+                    el.classList.remove('visible');
+                    setTimeout(() => {
+                        el.classList.add('visible');
+                    }, index * 400);
+                });
+            }
+        </script>
+
+        <h3>Basic Application Example</h3>
+        <p>Creating a Scene Graph using Group and adding it to the Stage <span class="citation">[Slide 36-39: Basic Example of JavaFX]</span>.</p>
+        <div class="code-container">
+<pre><code class="language-java">import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+public class MyFirstGUI extends Application {
+    public void start(Stage primaryStage) throws Exception {
+        Group root = new Group();
+        Scene s = new Scene(root, 600, 400);
+        primaryStage.setTitle("My First User Interface");
+        s.setFill(Color.ORANGE);
+        primaryStage.setScene(s);
+        primaryStage.show();
+    }
+    
+    public static void main(String[] args) {
+        launch(args);
+    }
+}</code></pre>
+        </div>
+        <div class="javafx-runner">
+            <div class="javafx-runner-title">Run the JavaFX application</div>
+            <textarea class="javafx-editor" spellcheck="false" aria-label="Editable JavaFX application source"></textarea>
+            <div class="javafx-runner-actions">
+                <button type="button" onclick="runJavaFxExample(this)">Run JavaFX</button>
+                <button type="button" class="javafx-stop" onclick="stopJavaFxExample(this)" disabled>Stop application</button>
+                <span class="javafx-runner-note">Requires OpenJFX and the local page server; the application opens in a desktop window.</span>
+            </div>
+            <pre class="javafx-output" aria-live="polite">The example source loads here. You can edit it before running.</pre>
+        </div>
+    </section>
+
+    <!-- SECTION 3: 2D Shapes -->
+    <section class="topic" id="shapes">
+        <div class="topic-head"><div><div class="topic-number">Topic 3</div><h2>2D Shapes</h2></div></div>
+        <p>JavaFX provides shape classes within the <code>javafx.scene.shape</code> package <span class="citation">[Slide 42: Classes for Shape]</span>.</p>
+        
+        <table>
+            <tr>
+                <th>Shape</th>
+                <th>Description & Properties</th>
+            </tr>
+            <tr>
+                <td><strong>Line</strong></td>
+                <td>Requires <code>StartX</code>, <code>StartY</code>, <code>EndX</code>, and <code>EndY</code> <span class="citation">[Slide 50: Line]</span>.</td>
+            </tr>
+            <tr>
+                <td><strong>Rectangle</strong></td>
+                <td>Requires <code>X</code>, <code>Y</code>, <code>Width</code>, <code>Height</code>. Can be rounded using <code>ArcWidth</code> and <code>ArcHeight</code> <span class="citation">[Slide 54: Rectangle]</span>.</td>
+            </tr>
+            <tr>
+                <td><strong>Circle</strong></td>
+                <td>Requires <code>CenterX</code>, <code>CenterY</code>, and <code>Radius</code> <span class="citation">[Slide 58: Circle]</span>.</td>
+            </tr>
+            <tr>
+                <td><strong>Ellipse</strong></td>
+                <td>Requires <code>CenterX</code>, <code>CenterY</code>, <code>RadiusX</code>, and <code>RadiusY</code> <span class="citation">[Slide 63: Ellipse]</span>.</td>
+            </tr>
+            <tr>
+                <td><strong>Polygon / Polyline</strong></td>
+                <td>Requires an array of Double points using <code>getPoints().addAll(...)</code> <span class="citation">[Slide 67: Polygon / Slide 72: Polyline]</span>.</td>
+            </tr>
+            <tr>
+                <td><strong>CubicCurve</strong></td>
+                <td>Requires Start, End, and two sets of Control points (ControlX1/Y1, ControlX2/Y2) <span class="citation">[Slide 78: CubicCurve]</span>.</td>
+            </tr>
+            <tr>
+                <td><strong>QuadCurve</strong></td>
+                <td>Requires Start, End, and a single set of Control points (ControlX/Y) <span class="citation">[Slide 83: QuadCurve]</span>.</td>
+            </tr>
+            <tr>
+                <td><strong>Arc</strong></td>
+                <td>Requires Center, Radius, <code>StartAngle</code>, and <code>Length</code> <span class="citation">[Slide 87: Arc]</span>.</td>
+            </tr>
+        </table>
+
+        <h3>Shape, Color & Image Example</h3>
+        <p>The <code>setFill(Color)</code> method applies color to nodes, while <code>setStroke(Color)</code> applies strokes <span class="citation">[Slide 93: Applying Color to the Nodes]</span>. Images can be loaded using the <code>Image</code> and <code>ImageView</code> classes in the <code>javafx.scene.image</code> package, which supports Bmp, Gif, Jpeg, and Png formats <span class="citation">[Slide 97: JavaFX Image]</span>.</p>
+        
+        <div class="code-container">
+<pre><code class="language-java">import java.io.FileInputStream;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+
+public class ShapeColorImageExample extends Application {
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Shape Example [Slide 90]
+        Ellipse ellipse = new Ellipse();
+        ellipse.setCenterX(300.0f);
+        ellipse.setCenterY(150.0f); 
+        ellipse.setRadiusX(150.0f);
+        ellipse.setRadiusY(75.0f);
+        
+        // Color Example [Slide 95]
+        Circle circle = new Circle();
+        circle.setCenterX(300.0f);
+        circle.setCenterY(180.0f);
+        circle.setRadius(90.0f); 
+        circle.setFill(Color.RED);
+        circle.setStrokeWidth(3);
+        circle.setStroke(Color.GREEN);
+        
+        // Image Example [Slide 98]
+        // Image image = new Image(new FileInputStream("D://image.jpg"));
+        // ImageView imageView = new ImageView(image);
+        
+        Group root = new Group(ellipse, circle);
+        Scene scene = new Scene(root, 600, 500);
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    public static void main(String args[]) {
+        launch(args);
+    }
+}</code></pre>
+        </div>
+        <div class="javafx-runner">
+            <div class="javafx-runner-title">Run the JavaFX application</div>
+            <textarea class="javafx-editor" spellcheck="false" aria-label="Editable JavaFX application source"></textarea>
+            <div class="javafx-runner-actions">
+                <button type="button" onclick="runJavaFxExample(this)">Run JavaFX</button>
+                <button type="button" class="javafx-stop" onclick="stopJavaFxExample(this)" disabled>Stop application</button>
+                <span class="javafx-runner-note">Requires OpenJFX and the local page server; the application opens in a desktop window.</span>
+            </div>
+            <pre class="javafx-output" aria-live="polite">The example source loads here. You can edit it before running.</pre>
+        </div>
+    </section>
+
+    <!-- SECTION 4: Layout Panes -->
+    <section class="topic" id="layouts">
+        <div class="topic-head"><div><div class="topic-number">Topic 4</div><h2>Layout Panes</h2></div></div>
+        <p>Layout refers to the arrangement of components within a container. All layout classes belong to the package <code>javafx.scene.layout</code>, and the class named <code>Pane</code> is the base class of all layouts in JavaFX <span class="citation">[Slide 100: Layout Panes]</span>.</p>
+
+        <ul>
+            <li><strong>HBox:</strong> Arranges all nodes in a single horizontal row <span class="citation">[Slide 105: HBox]</span>.</li>
+            <li><strong>VBox:</strong> Arranges all nodes in a single vertical column <span class="citation">[Slide 108: VBox]</span>.</li>
+            <li><strong>BorderPane:</strong> Arranges nodes in top, left, right, bottom, and center positions <span class="citation">[Slide 110: BorderPane]</span>.</li>
+            <li><strong>StackPane:</strong> Arranges nodes on top of another just like in a stack. The node added first is placed at the bottom <span class="citation">[Slide 114: StackPane]</span>.</li>
+            <li><strong>TextFlow:</strong> Arranges multiple text nodes in a single flow <span class="citation">[Slide 116: TextFlow]</span>.</li>
+            <li><strong>AnchorPane:</strong> Anchors the nodes at a particular distance from the pane <span class="citation">[Slide 119: AnchorPane]</span>.</li>
+            <li><strong>TilePane:</strong> Adds all nodes in the form of uniformly sized tiles <span class="citation">[Slide 123: TilePane]</span>.</li>
+            <li><strong>GridPane:</strong> Arranges nodes as a grid of rows and columns. Comes handy while creating forms <span class="citation">[Slide 126: GridPane]</span>.</li>
+            <li><strong>FlowPane:</strong> Wraps all nodes in a flow. A horizontal flow pane wraps elements at its height, while a vertical flow pane wraps elements at its width <span class="citation">[Slide 128: FlowPane]</span>.</li>
+        </ul>
+
+        <h3>Layout Example</h3>
+        <div class="code-container">
+<pre><code class="language-java">import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
+public class LayoutExample extends Application {
+    @Override
+    public void start(Stage stage) {
+        TextField textField = new TextField();
+        Button playButton = new Button("Play");
+        Button stopButton = new Button("stop");
+        
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        HBox.setMargin(textField, new Insets(20, 20, 20, 20));
+        HBox.setMargin(playButton, new Insets(20, 20, 20, 20));
+        HBox.setMargin(stopButton, new Insets(20, 20, 20, 20));
+        
+        hbox.getChildren().addAll(textField, playButton, stopButton);
+        
+        Scene scene = new Scene(hbox);
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    public static void main(String args[]) {
+        launch(args);
+    }
+}</code></pre>
+        </div>
+        <p class="citation">[Slide 130: Creating a Layout]</p>
+        <div class="javafx-runner">
+            <div class="javafx-runner-title">Run the JavaFX application</div>
+            <textarea class="javafx-editor" spellcheck="false" aria-label="Editable JavaFX application source"></textarea>
+            <div class="javafx-runner-actions">
+                <button type="button" onclick="runJavaFxExample(this)">Run JavaFX</button>
+                <button type="button" class="javafx-stop" onclick="stopJavaFxExample(this)" disabled>Stop application</button>
+                <span class="javafx-runner-note">Requires OpenJFX and the local page server; the application opens in a desktop window.</span>
+            </div>
+            <pre class="javafx-output" aria-live="polite">The example source loads here. You can edit it before running.</pre>
+        </div>
+    </section>
+
+    <!-- SECTION 5: Events -->
+    <section class="topic" id="events">
+        <div class="topic-head"><div><div class="topic-number">Topic 5</div><h2>Event Handling</h2></div></div>
+        
+        <h3>Target Selection</h3>
+        <p>When an action occurs, the system determines the target node based on internal rules <span class="citation">[Slide 134: Event Handling Phases]</span>:</p>
+        <ul>
+            <li><strong>Key events:</strong> Node that has focus.</li>
+            <li><strong>Mouse events:</strong> Node at the location of the cursor.</li>
+            <li><strong>Gesture events:</strong> Node at the center point of all touches at the beginning.</li>
+            <li><strong>Swipe events:</strong> Node at the center of the entire path of all fingers.</li>
+            <li><strong>Touch events:</strong> Node at the location first pressed.</li>
+        </ul>
+
+        <h3>Event Phases</h3>
+        <p><strong>Route Construction:</strong> The default route of an event is determined by the construction of an Event Dispatch chain (path from the stage to the source node) <span class="citation">[Slide 134: Event Handling Phases]</span>.</p>
+        
+        <p><strong>1. Event Capturing Phase:</strong> The root node dispatches the event, traveling to all nodes in the dispatch chain from top to bottom. If any node has a filter registered, it will execute <span class="citation">[Slide 134: Event Handling Phases]</span>.</p>
+        
+        <p><strong>2. Event Bubbling Phase:</strong> The event travels from the target node back to the stage node (bottom to top). If any node has a handler registered, it will execute <span class="citation">[Slide 135: Event Handling Phases (Cont.)]</span>.</p>
+
+        <!-- Animation: Event Phases -->
+        <div class="event-phase-anim">
+            <button class="btn-animate" onclick="runEventAnimation()">Simulate Event Dispatch</button>
+            <div id="ep-stage" class="ep-node">Stage Node (Top)</div>
+            <div id="ep-root" class="ep-node">Root Node</div>
+            <div id="ep-target" class="ep-node">Target Node (Bottom)</div>
+            <div id="ep-ball" class="ep-ball"></div>
+            <div id="ep-label" class="ep-label"></div>
+            <p class="citation" style="margin-top:10px; color:#555;">[Slides 134-135: Capturing & Bubbling Phases]</p>
+            <p class="print-only"><strong>Event route:</strong> Capturing travels from the stage through the root to the target (filters); bubbling travels from the target back to the stage (handlers).</p>
+        </div>
+
+        <script>
+            function runEventAnimation() {
+                const ball = document.getElementById('ep-ball');
+                const label = document.getElementById('ep-label');
+                
+                // Reset
+                ball.style.transition = 'none';
+                ball.style.opacity = '0';
+                ball.style.top = '30px';
+                label.style.opacity = '0';
+                
+                setTimeout(() => {
+                    // Capturing Phase (Down)
+                    ball.style.transition = 'all 1.5s ease-in-out';
+                    ball.style.opacity = '1';
+                    label.innerText = 'Capturing Phase (Filters)';
+                    label.style.opacity = '1';
+                    ball.style.top = '170px';
+                    
+                    setTimeout(() => {
+                        // Bubbling Phase (Up)
+                        label.innerText = 'Bubbling Phase (Handlers)';
+                        ball.style.top = '30px';
+                    }, 2000);
+                }, 100);
+            }
+        </script>
+
+        <h3>Handling Mouse Events Example</h3>
+        <div class="code-container">
+<pre><code class="language-java">import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+public class MouseEventExample extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        Group root = new Group();
+        Scene scene = new Scene(root, 300, 250);
+        
+        EventHandler&lt;MouseEvent&gt; mouseHandler = new EventHandler&lt;MouseEvent&gt;() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                System.out.println(mouseEvent.getEventType() + "\n" +
+                "X : Y - " + mouseEvent.getX() + " : " + mouseEvent.getY());
+            }
+        };
+
+        scene.setOnMouseClicked(mouseHandler);
+        scene.setOnMouseDragged(mouseHandler);
+        scene.setOnMouseEntered(mouseHandler);
+        
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    
+    public static void main(String[] args) {
+        launch(args);
+    }
+}</code></pre>
+        </div>
+        <p class="citation">[Slide 137-138: Handling Mouse Event]</p>
+        <div class="javafx-runner">
+            <div class="javafx-runner-title">Run the JavaFX application</div>
+            <textarea class="javafx-editor" spellcheck="false" aria-label="Editable JavaFX application source"></textarea>
+            <div class="javafx-runner-actions">
+                <button type="button" onclick="runJavaFxExample(this)">Run JavaFX</button>
+                <button type="button" class="javafx-stop" onclick="stopJavaFxExample(this)" disabled>Stop application</button>
+                <span class="javafx-runner-note">Requires OpenJFX and the local page server; the application opens in a desktop window.</span>
+            </div>
+            <pre class="javafx-output" aria-live="polite">The example source loads here. You can edit it before running.</pre>
+        </div>
+    </section>
+
+    <!-- SECTION 6: Animation -->
+    <section class="topic" id="animation">
+        <div class="topic-head"><div><div class="topic-number">Topic 6</div><h2>Animation</h2></div></div>
+        <p>JavaFX provides an easy-to-use animation API via the <code>javafx.animation</code> package. Predefined animations include <span class="citation">[Slide 140: Animation]</span>:</p>
+        <ul>
+            <li><strong>TranslateTransition:</strong> Allows movement from one point to another. Precision can be set using <code>setByX/Y</code> or <code>setToX/Y</code> <span class="citation">[Slide 140: Animation]</span>.</li>
+            <li><strong>ScaleTransition:</strong> Animates the scale/zoom of an object (enlarging or minimizing) <span class="citation">[Slide 140: Animation]</span>.</li>
+            <li><strong>RotateTransition:</strong> Animates the rotation of an object. Use <code>toAngle</code> or <code>byAngle</code> <span class="citation">[Slide 140: Animation]</span>.</li>
+            <li><strong>FadeTransition:</strong> Creates a fade-in/fade-out effect by controlling opacity via <code>to</code> and <code>from</code> values <span class="citation">[Slide 140: Animation]</span>.</li>
+            <li><strong>PathTransition:</strong> Moves an object through a specified path, ranging from straight lines to complex quadratic curves <span class="citation">[Slide 140: Animation]</span>.</li>
+        </ul>
+
+        <h3>RotateTransition Example</h3>
+        <div class="code-container">
+<pre><code class="language-java">import javafx.animation.RotateTransition;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+public class AnimationExample extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Rectangle rect = new Rectangle(200, 400);
+        rect.setX(400);
+        rect.setY(150);
+        
+        Group root = new Group(rect);
+        Scene s = new Scene(root, 1000, 700);
+        
+        Duration dt = new Duration(2500);
+        RotateTransition rt = new RotateTransition(dt, rect);
+        rt.setByAngle(180);
+        rt.play();
+        
+        primaryStage.setScene(s);
+        primaryStage.show();
+    }
+    
+    public static void main(String[] args) {
+        launch(args);
+    }
+}</code></pre>
+        </div>
+        <p class="citation">[Slide 141: Example Animation]</p>
+        <div class="javafx-runner">
+            <div class="javafx-runner-title">Run the JavaFX application</div>
+            <textarea class="javafx-editor" spellcheck="false" aria-label="Editable JavaFX application source"></textarea>
+            <div class="javafx-runner-actions">
+                <button type="button" onclick="runJavaFxExample(this)">Run JavaFX</button>
+                <button type="button" class="javafx-stop" onclick="stopJavaFxExample(this)" disabled>Stop application</button>
+                <span class="javafx-runner-note">Requires OpenJFX and the local page server; the application opens in a desktop window.</span>
+            </div>
+            <pre class="javafx-output" aria-live="polite">The example source loads here. You can edit it before running.</pre>
+        </div>
+    </section>
+
+    </main>
+</div>
+
+<footer>
+    ITMBU University • Computer Science &amp; Engineering • Unit 4 Study Guide
+</footer>
+
+<button class="top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" aria-label="Back to top">↑</button>
+
+<script>
+    const progress = document.getElementById("progress");
+
+    window.addEventListener("scroll", function () {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const percent = scrollable > 0
+            ? (window.scrollY / scrollable) * 100
+            : 0;
+        progress.style.width = percent + "%";
+    });
+
+    document.querySelectorAll(".javafx-runner").forEach(panel => {
+        const source = panel.closest(".topic")?.querySelector(".code-container pre code");
+        const editor = panel.querySelector(".javafx-editor");
+        if (source && editor) editor.value = source.textContent.trim();
+    });
+
+    function setJavaFxRunnerState(panel, running, canStop = running) {
+        const runButton = panel.querySelector(".javafx-runner-actions button:not(.javafx-stop)");
+        const stopButton = panel.querySelector(".javafx-stop");
+        if (runButton) runButton.disabled = running;
+        if (stopButton) stopButton.disabled = !canStop;
+    }
+
+    async function runJavaFxExample(button) {
+        const panel = button.closest(".javafx-runner");
+        const editor = panel?.querySelector(".javafx-editor");
+        const output = panel?.querySelector(".javafx-output");
+        if (!panel || !editor || !output) return;
+        if (!editor.value.trim()) {
+            output.textContent = "Enter a JavaFX application before running it.";
+            return;
+        }
+        if (window.location.protocol === "file:") {
+            output.textContent = "Open this page from http://127.0.0.1:8000/Unit4JAVAFXUI.html and start run_java_server.py.";
+            return;
+        }
+
+        setJavaFxRunnerState(panel, true, false);
+        output.textContent = "Compiling JavaFX application...";
+        try {
+            const response = await fetch("/api/execute-javafx", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: editor.value })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                output.textContent = result.error || `JavaFX runner returned HTTP ${response.status}.`;
+                setJavaFxRunnerState(panel, false);
+                return;
+            }
+            if (!result.running || !result.runId) {
+                output.textContent = result.output || "The JavaFX application exited before its window could be confirmed.";
+                setJavaFxRunnerState(panel, false);
+                return;
+            }
+
+            panel.dataset.runId = result.runId;
+            setJavaFxRunnerState(panel, true, true);
+            output.textContent = `${result.output} Close the desktop window or choose Stop application when finished.`;
+            pollJavaFxStatus(panel, result.runId);
+        } catch (error) {
+            output.textContent = `Could not reach the local JavaFX runner: ${error.message}`;
+            setJavaFxRunnerState(panel, false);
+        }
+    }
+
+    function pollJavaFxStatus(panel, runId) {
+        const timer = window.setTimeout(async () => {
+            if (panel.dataset.runId !== runId) return;
+            try {
+                const response = await fetch(`/api/javafx-status?runId=${encodeURIComponent(runId)}`);
+                const result = await response.json();
+                if (!response.ok && response.status !== 404) {
+                    throw new Error(result.error || `JavaFX status returned HTTP ${response.status}.`);
+                }
+                if (!result.running) {
+                    panel.querySelector(".javafx-output").textContent =
+                        result.output || result.error || "JavaFX application finished.";
+                    delete panel.dataset.runId;
+                    setJavaFxRunnerState(panel, false);
+                    return;
+                }
+                pollJavaFxStatus(panel, runId);
+            } catch (error) {
+                panel.querySelector(".javafx-output").textContent =
+                    `Could not read JavaFX application status: ${error.message}. Retrying; Stop application remains available.`;
+                setJavaFxRunnerState(panel, true, true);
+                panel.dataset.pollTimer = String(window.setTimeout(() => pollJavaFxStatus(panel, runId), 3000));
+            }
+        }, 1000);
+        panel.dataset.pollTimer = String(timer);
+    }
+
+    async function stopJavaFxExample(button) {
+        const panel = button.closest(".javafx-runner");
+        const output = panel?.querySelector(".javafx-output");
+        const runId = panel?.dataset.runId;
+        if (!panel || !output || !runId) return;
+        window.clearTimeout(Number(panel.dataset.pollTimer));
+        output.textContent = "Stopping JavaFX application...";
+        let stopped = false;
+        try {
+            const response = await fetch("/api/stop-javafx", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ runId })
+            });
+            const result = await response.json();
+            if (!response.ok && response.status !== 404) {
+                output.textContent = result.error || `JavaFX stop returned HTTP ${response.status}.`;
+            } else {
+                output.textContent = result.output || result.error || "JavaFX application stopped.";
+                stopped = true;
+            }
+        } catch (error) {
+            output.textContent = `Could not stop JavaFX application: ${error.message}`;
+        } finally {
+            if (stopped) {
+                delete panel.dataset.runId;
+                setJavaFxRunnerState(panel, false);
+            } else {
+                setJavaFxRunnerState(panel, true, true);
+            }
+        }
+    }
+</script>
+</body>
+</html>

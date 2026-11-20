@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITMBU University — Unit 3: Inheritance and Interface</title>
+    <style>
+      :root{
+        --bg:#f5f7fb;
+        --surface:#fff;
+        --surface-2:#eef3f8;
+        --text:#1f2937;
+        --muted:#64748b;
+        --primary:#0f766e;
+        --primary-2:#14b8a6;
+        --accent:#f97316;
+        --border:#dbe3ea;
+        --code:#101827;
+        --shadow:0 10px 30px rgba(15,23,42,.08);
+        --radius:16px;
+      }
+      *{box-sizing:border-box}
+      html{scroll-behavior:smooth}
+      body{
+        margin:0;
+        font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        background:var(--bg);
+        color:var(--text);
+        line-height:1.7;
+      }
+      a{color:var(--primary);text-decoration:none}
+      a:hover{text-decoration:underline}
+      .progress{
+        position:fixed;top:0;left:0;height:4px;width:0;z-index:1000;
+        background:linear-gradient(90deg,var(--primary),var(--accent));
+      }
+      header{
+        color:#fff;
+        background:radial-gradient(circle at top right,rgba(20,184,166,.35),transparent 35%),linear-gradient(135deg,#0f172a,#134e4a);
+        padding:64px 20px 58px;
+      }
+      .hero{max-width:1180px;margin:auto}
+      .eyebrow{
+        text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;
+        font-weight:800;opacity:.8;
+      }
+      h1{font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;margin:10px 0 14px}
+      .hero p{max-width:860px;font-size:1.08rem;color:#dbeafe;margin:0}
+      .notice{
+        max-width:1180px;margin:24px auto 0;padding:18px 20px;
+        border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);
+        border-radius:14px;color:#eefbf9;font-size:.94rem;
+      }
+      .pdf-action{
+        display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+        margin-top:14px;color:#dbeafe;font-size:.9rem;
+      }
+      .layout{
+        max-width:1280px;margin:0 auto;display:grid;
+        grid-template-columns:270px minmax(0,1fr);gap:28px;
+        padding:30px 20px 70px;
+      }
+      aside{
+        position:sticky;top:18px;height:max-content;background:var(--surface);
+        border:1px solid var(--border);border-radius:var(--radius);
+        padding:18px;box-shadow:var(--shadow);
+      }
+      aside h2{font-size:1rem;margin:0 0 12px}
+      aside a{
+        display:block;font-size:.9rem;padding:8px 10px;border-radius:8px;
+        color:var(--text);
+      }
+      aside a:hover{background:var(--surface-2);text-decoration:none}
+      main{min-width:0}
+      section.topic{
+        background:var(--surface);border:1px solid var(--border);
+        border-radius:var(--radius);box-shadow:var(--shadow);
+        padding:30px;margin-bottom:28px;
+      }
+      .topic-head{
+        display:flex;justify-content:space-between;gap:20px;
+        align-items:flex-start;margin-bottom:18px;
+      }
+      .topic-number{
+        color:var(--accent);font-size:.8rem;font-weight:800;
+        letter-spacing:.08em;text-transform:uppercase;
+      }
+      h2{font-size:clamp(1.6rem,3vw,2.2rem);line-height:1.2;margin:4px 0 8px}
+      h3{margin-top:26px;line-height:1.3}
+      p{margin:10px 0 14px}
+      ul{padding-left:22px}
+      li{margin:7px 0}
+      .citation{
+        display:inline-block;padding:2px 8px;border-radius:999px;
+        background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0;
+        font-size:.78rem;font-weight:700;margin-left:5px;white-space:nowrap;
+      }
+      .definition,.concept-card{
+        border-left:4px solid var(--primary);background:#f0fdfa;
+        padding:15px 18px;border-radius:10px;margin:18px 0;
+      }
+      .abstention-rule{
+        border-left:4px solid var(--accent);background:#fff7ed;
+        padding:14px 18px;border-radius:10px;color:#7c2d12;margin:16px 0;
+      }
+      .visual,.interactive-box{
+        margin:24px 0;border:1px solid var(--border);
+        background:var(--surface-2);border-radius:14px;padding:20px;overflow:hidden;
+        text-align:center;
+      }
+      .visual-title{font-weight:800;margin-bottom:14px}
+      button,.btn{
+        border:0;border-radius:9px;padding:9px 13px;background:var(--primary);
+        color:white;font-weight:700;cursor:pointer;margin:4px;
+      }
+      button:hover,.btn:hover{filter:brightness(1.08)}
+      button:disabled{opacity:.65;cursor:wait}
+      .hierarchy-anim{
+        display:flex;flex-direction:column;align-items:center;gap:15px;
+      }
+      .class-node{
+        padding:15px 30px;background:var(--primary);color:white;
+        border-radius:10px;font-weight:800;transition:.35s ease;opacity:.55;
+      }
+      .class-node.active{
+        background:var(--primary-2);transform:scale(1.04);opacity:1;
+        box-shadow:0 10px 18px rgba(20,184,166,.2);
+      }
+      .arrow-down{
+        width:0;height:0;border-left:10px solid transparent;
+        border-right:10px solid transparent;border-top:15px solid var(--primary-2);
+      }
+      table{width:100%;border-collapse:collapse;margin:18px 0}
+      th,td{border:1px solid var(--border);padding:12px;vertical-align:top;text-align:left}
+      th{background:#f1f5f9}
+      .code-wrap{margin-top:22px}
+      .code-title{font-weight:800;margin-bottom:8px}
+      pre{
+        margin:0;background:var(--code);color:#e5edf7;padding:20px;
+        border-radius:12px;overflow:auto;font-size:.88rem;line-height:1.65;tab-size:4;
+      }
+      code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+      iframe{
+        width:100%;height:500px;border:1px solid var(--border);
+        border-radius:8px;margin-top:12px;background:white;
+      }
+      .tip{
+        background:#f8fafc;border:1px solid var(--border);
+        padding:15px 18px;border-radius:10px;margin:18px 0;
+      }
+      .top{
+        position:fixed;right:20px;bottom:20px;width:42px;height:42px;
+        border-radius:50%;background:#0f172a;padding:0;z-index:999;
+      }
+      footer{text-align:center;color:var(--muted);padding:30px 20px 50px;font-size:.9rem}
+      @media(max-width:1000px){
+        .layout{grid-template-columns:1fr}
+        aside{position:relative;top:auto}
+      }
+      @media(max-width:650px){
+        section.topic{padding:21px}
+        h1{font-size:2.3rem}
+        table{font-size:.88rem}
+        th,td{padding:8px}
+      }
+      @page{size:A4;margin:16mm 15mm 18mm}
+      @media print{
+        html{scroll-behavior:auto}
+        body{
+          background:#fff;color:#111827;font-size:10pt;line-height:1.5;
+          -webkit-print-color-adjust:exact;print-color-adjust:exact;
+        }
+        .progress,aside,.pdf-action,button,.top{display:none!important}
+        header{padding:0 0 14pt;color:#111827;background:#fff!important;border-bottom:2px solid #0f766e}
+        .hero{max-width:none}
+        .eyebrow{color:#0f766e;opacity:1}
+        h1{color:#111827;font-size:26pt}
+        .hero p{color:#374151;font-size:11pt}
+        .notice{margin:12pt 0 0;padding:10pt;color:#1f2937;background:#f3f4f6;border:1px solid #d1d5db}
+        .layout{display:block;max-width:none;margin:0;padding:12pt 0 0}
+        section.topic{margin:0;padding:14pt 0;border:0;border-bottom:1px solid #9ca3af;border-radius:0;box-shadow:none;break-inside:auto}
+        .topic-head,h2,h3{break-after:avoid-page}
+        h2{font-size:17pt}
+        h3{font-size:12pt}
+        p,ul,ol{orphans:3;widows:3}
+        li,tr,.definition,.concept-card,.abstention-rule,.visual,.code-wrap,pre{break-inside:avoid-page}
+        .visual,.definition,.concept-card,.abstention-rule{overflow:visible;box-shadow:none}
+        .class-node{opacity:1;transform:none;box-shadow:none}
+        pre{overflow:visible;padding:10pt;color:#111827;background:#f3f4f6;border:1px solid #cbd5e1;border-radius:4px;font-size:8pt;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+        iframe{display:none!important}
+        .citation{color:#374151;background:#f3f4f6;border-color:#d1d5db;font-size:8pt}
+        a{color:#111827;text-decoration:none}
+        footer{padding:14pt 0 0;color:#4b5563;border-top:1px solid #9ca3af}
+      }
+    </style>
+</head>
+<body>
+  <a href="index.html" style="position:fixed;top:14px;left:14px;z-index:1100;padding:8px 12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;color:#fff;background:rgba(15,23,42,.72);font-size:.82rem;font-weight:700;text-decoration:none;backdrop-filter:blur(8px)">Dashboard</a>
+
+<div class="progress" id="progress"></div>
+
+<header>
+    <div class="hero">
+        <div class="eyebrow">ITMBU University • Computer Science &amp; Engineering</div>
+        <h1>Unit 3: Inheritance and Interface</h1>
+        <p>Study guide covering Java inheritance, polymorphism, abstract classes, interfaces, nested classes, packages, and class paths.</p>
+        <div class="notice">
+            <strong>Unit overview:</strong> Use the navigation to move between topics. Code examples and interactive visualizations are included where available.
+        </div>
+        <div class="pdf-action">
+            <button type="button" onclick="window.print()">Download as PDF</button>
+            <span>In the print dialog, choose <strong>Save as PDF</strong> as the destination.</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside>
+        <h2>Unit Navigation</h2>
+        <a href="#fundamentals">1. Fundamentals Review</a>
+        <a href="#inheritance">2. Inheritance</a>
+        <a href="#polymorphism">3. Polymorphism</a>
+        <a href="#final">4. The <code>final</code> Keyword</a>
+        <a href="#abstract">5. Abstract Classes &amp; instanceof</a>
+        <a href="#interfaces">6. Interfaces</a>
+        <a href="#nested">7. Nested &amp; Inner Classes</a>
+        <a href="#packages">8. Packages &amp; Class Path</a>
+    </aside>
+
+    <main>
+    <section class="topic" id="fundamentals">
+        <div class="topic-head"><div><div class="topic-number">Topic 1</div><h2>Fundamentals Review</h2></div></div>
+        <div class="concept-card">
+            <h3>Key Class & Method Concepts</h3>
+            <ul>
+                <li><strong>Class:</strong> A template from which objects (instances) are created, containing data and code[cite: 52].</li>
+                <li><strong>Constructor:</strong> Initializes an object immediately upon creation. It has the exact same name as the class and does not have a return type, not even <code>void</code>[cite: 54].</li>
+                <li><strong><code>this</code> Keyword:</strong> Used inside any method to refer to the current object on which the method was invoked[cite: 55].</li>
+            </ul>
+        </div>
+
+        <h3>The <code>static</code> Keyword[cite: 56, 57]</h3>
+        <p>Preceding a member declaration with <code>static</code> allows it to be used independently of any object of that class[cite: 56]. A common example is <code>main()</code>, which must be called before any objects exist[cite: 56].</p>
+        <ul>
+            <li>Static instance variables act as global variables; all instances share the same copy[cite: 57].</li>
+            <li><strong>Restrictions:</strong> Static methods can only call other static methods, access static data, and cannot refer to <code>this</code> or <code>super</code>[cite: 57].</li>
+            <li>A static block can be declared to initialize static variables, executing exactly once when the class loads[cite: 57].</li>
+        </ul>
+
+        <h3>Access Modifiers Overview[cite: 58, 152]</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Access Modifier</th>
+                    <th>Same Class</th>
+                    <th>Subclass in Same Package</th>
+                    <th>Other Classes in Same Package</th>
+                    <th>Subclass in Other Packages</th>
+                    <th>Non-subclasses in Other Package</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Public</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+                <tr><td><strong>Protected</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+                <tr><td><strong>Friendly (Default)</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr>
+                <tr><td><strong>Private</strong></td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="topic" id="inheritance">
+        <div class="topic-head"><div><div class="topic-number">Topic 2</div><h2>Inheritance</h2></div></div>
+        <p>Inheritance allows you to derive new classes from existing classes, making features of the existing class available to the new class[cite: 59]. This promotes code <strong>reusability</strong> without rewriting code[cite: 59, 62].</p>
+        <ul>
+            <li>Implemented using the <code>extends</code> keyword[cite: 59].</li>
+            <li>The existing class is the <strong>superclass</strong>; the inheriting class is the <strong>subclass</strong>[cite: 59, 61].</li>
+            <li>A subclass inherits all members of the superclass <em>except</em> private members[cite: 61, 72].</li>
+            <li>Java does <strong>not</strong> support multiple class inheritance (a class can specify only one superclass)[cite: 60].</li>
+            <li><strong>Multi-level inheritance:</strong> Involves two or more classes (e.g., Class C extends Class B, and Class B extends Class A)[cite: 73].</li>
+        </ul>
+
+        <h3>The <code>super</code> Keyword & Constructor Hierarchy[cite: 65, 78]</h3>
+        <p>The <code>super</code> keyword refers to the superclass[cite: 65]. It can be used to call the superclass's methods or constructors[cite: 77]. In a class hierarchy, constructors are called in order of derivation, from superclass to subclass[cite: 78].</p>
+
+        <!-- Visual Concept Animation -->
+        <div class="interactive-box">
+            <h3>Constructor Execution Order Visualizer[cite: 79]</h3>
+            <p>Click the button to instantiate <code>Class C</code> (where C extends B, and B extends A).</p>
+            <div class="hierarchy-anim">
+                <div class="class-node" id="node-A">Superclass A Constructor()</div>
+                <div class="arrow-down"></div>
+                <div class="class-node" id="node-B">Subclass B Constructor()</div>
+                <div class="arrow-down"></div>
+                <div class="class-node" id="node-C">Subclass C Constructor()</div>
+            </div>
+            <button class="btn" id="btn-instantiate" onclick="triggerConstructors()">new C()</button>
+        </div>
+
+        <script>
+            function triggerConstructors() {
+                const btn = document.getElementById('btn-instantiate');
+                const nodeA = document.getElementById('node-A');
+                const nodeB = document.getElementById('node-B');
+                const nodeC = document.getElementById('node-C');
+                
+                btn.disabled = true;
+                nodeA.classList.remove('active');
+                nodeB.classList.remove('active');
+                nodeC.classList.remove('active');
+
+                setTimeout(() => nodeA.classList.add('active'), 500);
+                setTimeout(() => nodeB.classList.add('active'), 1500);
+                setTimeout(() => {
+                    nodeC.classList.add('active');
+                    btn.disabled = false;
+                }, 2500);
+            }
+        </script>
+
+        <h4>Interactive Code Playground: Inheritance & <code>super</code>[cite: 77]</h4>
+<pre><code>class A {
+    int x;
+    A(int x) {
+        this.x = x;
+    }
+    void show() {
+        System.out.println("Super class x = " + x);
+    }
+}
+
+class B extends A {
+    int y;
+    B(int a, int b) {
+        super(a); // Calls superclass constructor
+        y = b;
+    }
+    void show() {
+        super.show(); // Calls superclass method
+        System.out.println("Sub class y = " + y);
+    }
+}
+
+public class Main {
+    public static void main(String args[]) {
+        B ob = new B(10, 24);
+        ob.show();
+    }
+}</code></pre>
+        <iframe src="https://onecompiler.com/embed/java" width="100%" height="500px" style="border:1px solid #ddd; border-radius: 8px;"></iframe>
+    </section>
+
+    <section class="topic" id="polymorphism">
+        <div class="topic-head"><div><div class="topic-number">Topic 3</div><h2>Polymorphism</h2></div></div>
+        <p>Polymorphism (meaning "many forms") is the ability of the same method to take more than one form to perform several tasks[cite: 81]. It is categorized into two types:</p>
+        
+        <table class="concept-table">
+            <tr>
+                <th>Static Polymorphism (Compile Time)[cite: 81]</th>
+                <th>Dynamic Polymorphism (Run Time)[cite: 82]</th>
+            </tr>
+            <tr>
+                <td><strong>Method Overloading:</strong> Writing multiple methods in the same class with the same name but different signatures[cite: 83, 85].</td>
+                <td><strong>Method Overriding:</strong> Writing methods in super and sub classes with the same name and same signature[cite: 85, 87].</td>
+            </tr>
+            <tr>
+                <td>Differences in signature can be based on the number, data type, or sequence of parameters[cite: 84].</td>
+                <td>JVM executes the method depending on the type of the object at run time[cite: 82, 87].</td>
+            </tr>
+        </table>
+    </section>
+
+    <section class="topic" id="final">
+        <div class="topic-head"><div><div class="topic-number">Topic 4</div><h2>The <code>final</code> Keyword</h2></div></div>
+        <p>The <code>final</code> keyword sets limitations on extensibility[cite: 89].</p>
+        <ul>
+            <li><strong>Final Class:</strong> Cannot be extended (inherited)[cite: 90].</li>
+            <li><strong>Final Method:</strong> Cannot be overridden[cite: 91].</li>
+            <li><strong>Final Variable:</strong> Cannot be reassigned once initialized. If a reference object is final, it cannot be reassigned, but its internal properties can still be changed[cite: 92, 93].</li>
+            <li><strong>Final Argument:</strong> Cannot be changed inside a method[cite: 94].</li>
+        </ul>
+    </section>
+
+    <section class="topic" id="abstract">
+        <div class="topic-head"><div><div class="topic-number">Topic 5</div><h2>Abstract Class &amp; <code>instanceof</code> Operator</h2></div></div>
+        
+        <h3>Abstract Classes</h3>
+        <p>An abstract class is declared using the <code>abstract</code> keyword and <strong>cannot be instantiated</strong>[cite: 95, 98]. It acts as a template for other classes[cite: 98].</p>
+        <ul>
+            <li>Can contain both <strong>concrete methods</strong> (methods with a body) and <strong>abstract methods</strong> (methods without a body)[cite: 96, 97].</li>
+            <li>Subclasses must provide implementations for the abstract methods[cite: 98].</li>
+        </ul>
+
+        <h3><code>instanceof</code> Operator[cite: 101]</h3>
+        <p>Evaluates if an object is an instance of a class (or subclass). Returns <code>true</code> if the object was created from the class or its subclass, otherwise returns <code>false</code>[cite: 101]. Syntax: <code>operand1 instanceof operand2</code>[cite: 101].</p>
+
+        <h4>Interactive Code Playground: Abstract Class[cite: 99]</h4>
+<pre><code>abstract class Parent {
+    abstract void abstractmethod(); // No body
+    
+    void nonabstract() {
+        System.out.println("This is a concrete method.");
+    }
+}
+
+class Child extends Parent {
+    // Subclass MUST implement abstract methods
+    void abstractmethod() {
+        System.out.println("Child implements abstractmethod.");
+    }
+}
+
+public class Main {
+    public static void main(String args[]) {
+        Child c = new Child();
+        c.abstractmethod();
+        c.nonabstract();
+        
+        // instanceof check
+        System.out.println("Is c an instance of Parent? " + (c instanceof Parent));
+    }
+}</code></pre>
+        <iframe src="https://onecompiler.com/embed/java" width="100%" height="500px" style="border:1px solid #ddd; border-radius: 8px;"></iframe>
+    </section>
+
+    <section class="topic" id="interfaces">
+        <div class="topic-head"><div><div class="topic-number">Topic 6</div><h2>Interfaces</h2></div></div>
+        <p>An interface is a collection of abstract methods and final variables[cite: 103, 107]. Java does not support multiple class inheritance, but a class can implement multiple interfaces to achieve multiple inheritance[cite: 104, 106].</p>
+        <ul>
+            <li>Interfaces define <em>what</em> a class should do, not <em>how</em> it does it (methods have no body)[cite: 107].</li>
+            <li>Variables in an interface are implicitly <code>static final</code> (constants)[cite: 109].</li>
+            <li>Methods that implement an interface must be declared <code>public</code>[cite: 110].</li>
+            <li>Interfaces use the <code>implements</code> keyword when bound to a class, and can use <code>extends</code> to inherit from another interface[cite: 112, 116].</li>
+        </ul>
+
+        <h3>Interface vs Abstract Class[cite: 124]</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Interface</th>
+                    <th>Abstract Class</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>implements</code> keyword used[cite: 124].</td>
+                    <td><code>extends</code> keyword used[cite: 124].</td>
+                </tr>
+                <tr>
+                    <td>Multiple inheritance possible (can inherit many interfaces)[cite: 124].</td>
+                    <td>Multiple inheritance not possible (can inherit one class)[cite: 124].</td>
+                </tr>
+                <tr>
+                    <td>Methods are inherently public and abstract[cite: 124].</td>
+                    <td>Methods must be explicitly tagged as public/abstract[cite: 124].</td>
+                </tr>
+                <tr>
+                    <td>No implementation at all[cite: 124].</td>
+                    <td>Can have partial implementation (concrete methods)[cite: 124].</td>
+                </tr>
+                <tr>
+                    <td>No constructors[cite: 124].</td>
+                    <td>Can have constructors[cite: 124].</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>Interactive Code Playground: Interfaces[cite: 119, 120]</h4>
+<pre><code>interface Area {
+    final static float PI = 3.14F;
+    float compute(float x, float y); // Abstract method
+}
+
+class Rectangle implements Area {
+    // Must be declared public
+    public float compute(float x, float y) {
+        return (x * y);
+    }
+}
+
+public class Main {
+    public static void main(String args[]) {
+        Rectangle rect = new Rectangle();
+        Area a = rect; // Interface reference
+        
+        System.out.println("Area of rectangle = " + a.compute(10, 20));
+    }
+}</code></pre>
+        <iframe src="https://onecompiler.com/embed/java" width="100%" height="500px" style="border:1px solid #ddd; border-radius: 8px;"></iframe>
+    </section>
+
+    <section class="topic" id="nested">
+        <div class="topic-head"><div><div class="topic-number">Topic 7</div><h2>Nested &amp; Inner Classes</h2></div></div>
+        <p>A nested class is defined within another class. It has access to all members (including private) of the enclosing class, but the outer class cannot access the inner class's members directly[cite: 125, 130].</p>
+        <ul>
+            <li><strong>Static Nested Class:</strong> Has static modifier. Cannot refer directly to members of its enclosing class[cite: 130].</li>
+            <li><strong>Non-static Nested Class (Inner Class):</strong> Fully within the scope of the enclosing class. Can access all variables/methods of the outer class[cite: 130].</li>
+        </ul>
+        <div class="abstention-rule">
+            * Note on Applets: The slides mention nested classes are helpful in handling events in applets[cite: 125]. Applets are also listed under system packages[cite: 136]. Further explanation of Applets requires additional slide context.
+        </div>
+    </section>
+
+    <section class="topic" id="packages">
+        <div class="topic-head"><div><div class="topic-number">Topic 8</div><h2>Packages &amp; Class Path</h2></div></div>
+        <p>Packages group related classes/interfaces together acting as "containers", allowing code reuse, preventing naming conflicts, and hiding classes[cite: 131, 133].</p>
+        
+        <div class="concept-card">
+            <strong>System Packages (Java API):</strong>
+            <ul>
+                <li><code>java.lang</code>: Language support (primitive types, math, exceptions). Automatically imported[cite: 135].</li>
+                <li><code>java.util</code>: Utility classes (Vector, hash tables, random numbers)[cite: 135].</li>
+                <li><code>java.io</code>: Input/output facilities[cite: 135].</li>
+                <li><code>java.net</code>: Network communication[cite: 136].</li>
+                <li><code>java.awt</code>: Abstract Window Toolkit for GUI[cite: 136].</li>
+                <li><code>java.applet</code>: Classes for creating applets[cite: 136].</li>
+            </ul>
+        </div>
+
+        <h3>Creating and Accessing Packages[cite: 139, 142]</h3>
+        <ul>
+            <li><strong>Creating:</strong> Use <code>package packagename;</code> as the first statement in the source file[cite: 139]. Naming convention suggests lowercase, often prefixed by domain names[cite: 138].</li>
+            <li><strong>Importing:</strong> Use <code>import Packagename.classname;</code> to import a specific class, or <code>import Packagename.*;</code> to import all public classes in a package[cite: 137, 143].</li>
+            <li><strong>Hiding:</strong> To hide a class from being accessed outside its package, do not declare it <code>public</code>[cite: 155].</li>
+        </ul>
+
+        <h3>Class Path</h3>
+        <p>A classpath is a list of directories the compiler and interpreter search to find class files[cite: 157]. If saving classes outside the default JDK bin folder, you must set the classpath[cite: 157].</p>
+        <ul>
+            <li>Command line: <code>javac -d classpath filename</code>[cite: 158]</li>
+            <li>Environment setup: <code>set path="c:\program files\java\jdk1.2\bin"</code>[cite: 158]</li>
+        </ul>
+    </section>
+
+    </main>
+</div>
+
+<footer>
+    ITMBU University • Computer Science &amp; Engineering • Unit 3 Study Guide
+</footer>
+
+<button class="top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" aria-label="Back to top">↑</button>
+
+<script>
+    const progress = document.getElementById("progress");
+
+    window.addEventListener("scroll", function () {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const percent = scrollable > 0
+            ? (window.scrollY / scrollable) * 100
+            : 0;
+        progress.style.width = percent + "%";
+    });
+</script>
+</body>
+</html>
